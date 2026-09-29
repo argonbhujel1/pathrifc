@@ -1,0 +1,26 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}All-Time XI | Admin{% endblock %}
+{% block content %}
+<div class="container" style="max-width:640px;padding:40px 20px;">
+  <h2 style="color:var(--text);">{{ 'Edit' if item else 'New' }} XI Slot</h2>
+  <form method="POST" enctype="multipart/form-data" class="card" style="padding:24px;">
+    <div class="form-group"><label>Position</label>
+      <select name="position" class="form-control">
+        {% for p in ['GK','RB','CB','LB','DM','CM','AM','WG','ST','FB','MF'] %}
+        <option value="{{ p }}" {% if item and item.position==p %}selected{% endif %}>{{ p }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group"><label>Name *</label><input name="name" class="form-control" value="{{ item.name if item else '' }}" required></div>
+    <div class="form-group"><label>Number</label><input type="number" name="number" class="form-control" value="{{ item.number if item and item.number is not none else '' }}"></div>
+    <div class="form-group"><label>Note</label><input name="note" class="form-control" value="{{ item.note if item else '' }}"></div>
+    <div class="form-group"><label>Photo file</label><input type="file" name="photo" accept="image/*" class="form-control"></div>
+    <div class="form-group"><label>OR photo URL</label><input type="url" name="photo_url" class="form-control"></div>
+    {% if item and item.photo %}<p><img src="{{ item.photo|media_url }}" style="max-height:120px;border-radius:8px;"></p>{% endif %}
+    <div class="form-group"><label>Order</label><input type="number" name="order" class="form-control" value="{{ item.order if item else 0 }}"></div>
+    <div class="form-group"><label><input type="checkbox" name="is_published" {% if not item or item.is_published %}checked{% endif %}> Published</label></div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{{ url_for('admin.xi_list') }}" class="btn btn-outline">Cancel</a>
+  </form>
+</div>
+{% endblock %}

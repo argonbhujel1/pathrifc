@@ -1,0 +1,37 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Hall of Fame / WATN | Admin{% endblock %}
+{% block content %}
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div style="padding:0 20px 16px;"><strong>PATHARI-11 FC Admin</strong></div>
+    <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('admin.legends_list') }}">Hall of Fame / WATN</a>
+    <a href="{{ url_for('admin.logout') }}">Logout</a>
+  </aside>
+  <div class="admin-main">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h1 style="color:var(--text);margin:0;">Hall of Fame / WATN</h1>
+      <a href="{{ url_for('admin.legends_edit') }}" class="btn btn-primary">+ Add</a>
+    </div>
+    <table class="admin-table">
+      <thead><tr><th>ID</th><th>name</th><th>category</th><th>era</th><th>role</th><th></th></tr></thead>
+      <tbody>
+      {% for item in items %}
+      <tr>
+        <td>{{ item.id }}</td>
+        <td>{{ item.name or "—" }}</td><td>{{ item.category or "—" }}</td><td>{{ item.era or "—" }}</td><td>{{ item.role or "—" }}</td>
+        <td>
+          <a href="{{ url_for('admin.legends_edit', id=item.id) }}" class="btn btn-ghost btn-sm">Edit</a>
+          <form method="POST" action="{{ url_for('admin.legends_delete', id=item.id) }}" style="display:inline;" onsubmit="return pathariConfirmDelete(this,'Delete?','Remove this item?');">
+            <button type="submit" class="btn btn-ghost btn-sm">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="12">No items yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

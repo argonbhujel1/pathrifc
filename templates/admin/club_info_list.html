@@ -1,0 +1,33 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Club Info | Admin{% endblock %}
+{% block content %}
+<div class="container" style="padding:40px 20px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+    <h2 style="color:var(--text);margin:0;">Club Info / History</h2>
+    <a href="{{ url_for('admin.club_info_edit') }}" class="btn btn-primary">Add block</a>
+  </div>
+  <p class="text-muted" style="margin-bottom:16px;">These blocks appear on the public Club page. Seed does not overwrite after first save.</p>
+  <div class="card" style="padding:0;overflow:auto;">
+    <table class="admin-table">
+      <thead><tr><th>Key</th><th>Title</th><th>Content preview</th><th></th></tr></thead>
+      <tbody>
+      {% for item in items %}
+        <tr>
+          <td><code>{{ item.key }}</code></td>
+          <td>{{ item.title }}</td>
+          <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ item.content[:120] if item.content else '' }}</td>
+          <td>
+            <a href="{{ url_for('admin.club_info_edit', id=item.id) }}" class="btn btn-outline btn-sm">Edit</a>
+            <form method="POST" action="{{ url_for('admin.club_info_delete', id=item.id) }}" style="display:inline;" onsubmit="return confirm('Delete?');">
+              <button class="btn btn-ghost btn-sm" type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="4">No club info yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Player | Admin{% endblock %}
+{% block content %}
+<div class="container" style="max-width:640px;padding:40px 20px;">
+<h2 style="color:var(--text);margin-bottom:16px;">{% if item %}Edit Player{% else %}Add Player{% endif %}</h2>
+<form method="POST" enctype="multipart/form-data" class="card" style="padding:24px;">
+<div class="form-group"><label>Name</label><input name="name" class="form-control" value="{{ item.name if item else '' }}"></div>
+<div class="form-group"><label>Number</label><input type="number" name="number" class="form-control" value="{{ item.number if item else '' }}"></div>
+<div class="form-group"><label>Role / Position</label>
+<select name="position" class="form-control">
+{% set roles = ['Goalkeeper (GK)', 'Centre Back (CB)', 'Full Back (FB)', 'Wing Back (WB)', 'Defensive Midfielder (DM)', 'Central Midfielder (CM)', 'Attacking Midfielder (AM)', 'Winger (WG)', 'Forward (FW)', 'Striker (ST)', 'Captain', 'Vice Captain', 'Coach', 'Assistant Coach', 'Team Manager'] %}
+{% for r in roles %}
+<option value="{{ r }}" {% if item and item.position == r %}selected{% endif %}>{{ r }}</option>
+{% endfor %}
+</select>
+</div>
+<div class="form-group"><label>Nationality</label><input name="nationality" class="form-control" value="{{ item.nationality if item else 'Nepal' }}"></div>
+<div class="form-group"><label>Display Order</label><input type="number" name="order" class="form-control" value="{{ item.order if item else 0 }}"></div>
+<div class="form-group"><label><input type="checkbox" name="is_published" {% if item and item.is_published %}checked{% endif %}> Published (show on site)</label></div>
+<div class="form-group"><label>Photo — file</label><input type="file" name="photo" class="form-control" accept="image/*"></div>
+<div class="form-group"><label>OR paste photo URL</label><input type="url" name="photo_url" class="form-control" placeholder="https://..."></div>
+{% if item and item.photo %}<p><img src="{{ item.photo|media_url }}" style="height:80px;border-radius:8px;"></p>{% endif %}
+<button class="btn btn-primary">Save</button>
+<a href="{{ url_for('admin.players_list') }}" class="btn btn-outline">Back</a>
+</form>
+</div>
+{% endblock %}

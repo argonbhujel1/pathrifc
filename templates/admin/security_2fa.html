@@ -1,0 +1,62 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Security 2FA | Admin{% endblock %}
+{% block content %}
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div style="padding:0 20px 16px;"><strong style="color:var(--text);">PATHARI-11 FC Admin</strong></div>
+    <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('admin.security_2fa') }}">Security (2FA)</a>
+    <a href="{{ url_for('admin.settings') }}">Settings</a>
+    <a href="{{ url_for('admin.logout') }}">Logout</a>
+  </aside>
+  <div class="admin-main" style="max-width:560px;">
+    <h1 style="color:var(--text);margin-bottom:8px;">Two-Factor Authentication</h1>
+    <p class="text-muted" style="margin-bottom:20px;">Google Authenticator, Authy, Microsoft Authenticator, or browser Authenticator extensions (TOTP).</p>
+
+    <div class="card" style="padding:20px;margin-bottom:16px;">
+      <p><strong>Status:</strong>
+        {% if enabled %}
+        <span style="color:#22c55e;">Enabled</span>
+        {% else %}
+        <span style="color:#fbbf24;">Disabled</span>
+        {% endif %}
+      </p>
+    </div>
+
+    {% if not enabled %}
+    <div class="card" style="padding:24px;margin-bottom:16px;">
+      <h3 style="color:var(--neon);margin-bottom:12px;">1. Scan QR code</h3>
+      <p class="text-muted" style="font-size:0.85rem;margin-bottom:12px;">Open Google Authenticator → + → Scan QR code</p>
+      <p style="text-align:center;margin:16px 0;">
+        <img src="{{ qr_url }}" alt="2FA QR" width="200" height="200" style="border-radius:12px;background:#fff;padding:8px;">
+      </p>
+      <p class="text-muted" style="font-size:0.8rem;word-break:break-all;"><strong>Manual key:</strong> {{ secret }}</p>
+      <h3 style="color:var(--neon);margin:20px 0 12px;">2. Enter code to enable</h3>
+      <form method="POST">
+        <input type="hidden" name="action" value="enable">
+        <div class="form-group">
+          <input type="text" name="code" class="form-control" placeholder="6-digit code" inputmode="numeric" required maxlength="8" style="letter-spacing:0.2em;text-align:center;">
+        </div>
+        <button type="submit" class="btn btn-primary">Enable 2FA</button>
+      </form>
+      <form method="POST" style="margin-top:12px;">
+        <input type="hidden" name="action" value="reset_secret">
+        <button type="submit" class="btn btn-outline btn-sm">Generate new secret / QR</button>
+      </form>
+    </div>
+    {% else %}
+    <div class="card" style="padding:24px;">
+      <h3 style="color:var(--neon);margin-bottom:12px;">Disable 2FA</h3>
+      <p class="text-muted" style="font-size:0.85rem;margin-bottom:12px;">Enter a current authenticator code to turn off 2FA.</p>
+      <form method="POST">
+        <input type="hidden" name="action" value="disable">
+        <div class="form-group">
+          <input type="text" name="code" class="form-control" placeholder="6-digit code" inputmode="numeric" required maxlength="8" style="letter-spacing:0.2em;text-align:center;">
+        </div>
+        <button type="submit" class="btn btn-primary" style="background:#dc2626;">Disable 2FA</button>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

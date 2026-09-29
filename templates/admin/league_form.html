@@ -1,0 +1,25 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}League Row | Admin{% endblock %}
+{% block content %}
+<div class="container" style="max-width:640px;padding:40px 20px;">
+<h2 style="color:var(--text);margin-bottom:16px;">{% if item %}Edit{% else %}Add{% endif %} League Row</h2>
+<form method="POST" class="card" style="padding:24px;">
+<div class="form-group"><label>Team Name *</label><input name="team_name" class="form-control" value="{{ item.team_name if item else '' }}" required></div>
+<div class="form-group"><label>Position</label><input type="number" name="position" class="form-control" value="{{ item.position if item else 1 }}"></div>
+<div class="grid-2">
+<div class="form-group"><label>Played</label><input type="number" name="played" class="form-control" value="{{ item.played if item else 0 }}"></div>
+<div class="form-group"><label>Won</label><input type="number" name="won" class="form-control" value="{{ item.won if item else 0 }}"></div>
+<div class="form-group"><label>Drawn</label><input type="number" name="drawn" class="form-control" value="{{ item.drawn if item else 0 }}"></div>
+<div class="form-group"><label>Lost</label><input type="number" name="lost" class="form-control" value="{{ item.lost if item else 0 }}"></div>
+<div class="form-group"><label>Goals For</label><input type="number" name="goals_for" class="form-control" value="{{ item.goals_for if item else 0 }}"></div>
+<div class="form-group"><label>Goals Against</label><input type="number" name="goals_against" class="form-control" value="{{ item.goals_against if item else 0 }}"></div>
+</div>
+<div class="form-group"><label>Points</label><input type="number" name="points" class="form-control" value="{{ item.points if item else 0 }}"></div>
+<div class="form-group"><label>Season</label><input name="season" class="form-control" value="{{ item.season if item else '2025/26' }}"></div>
+<div class="form-group"><label><input type="checkbox" name="is_pathari" {% if item and item.is_pathari %}checked{% endif %}> This is Pathari-11 FC</label></div>
+<div class="form-group"><label><input type="checkbox" name="is_published" {% if not item or item.is_published %}checked{% endif %}> Published</label></div>
+<button class="btn btn-primary">Save</button>
+<a href="{{ url_for('admin.league_list') }}" class="btn btn-outline">Back</a>
+</form>
+</div>
+{% endblock %}

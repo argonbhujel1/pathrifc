@@ -1,0 +1,63 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}{% if item %}Edit{% else %}Add{% endif %} Sponsor | Admin{% endblock %}
+{% block content %}
+<div class="container" style="max-width:640px;padding:40px 20px;">
+  <h2 style="color:var(--text);margin-bottom:20px;">{% if item %}Edit Sponsor{% else %}Add Sponsor{% endif %}</h2>
+  <form method="POST" enctype="multipart/form-data" class="card" style="padding:24px;">
+    <div class="form-group">
+      <label>Name *</label>
+      <input type="text" name="name" class="form-control" value="{{ item.name if item else '' }}" required>
+    </div>
+    <div class="form-group">
+      <label>Website URL (clickable logo)</label>
+      <input type="url" name="website" class="form-control" placeholder="https://..." value="{{ item.website if item and item.website else '' }}">
+    </div>
+    <div class="form-group">
+      <label>Category (type your own or pick suggestion)</label>
+      <input type="text" name="category" class="form-control" list="sponsor-cat-suggestions"
+             placeholder="e.g. Title Sponsor, Kit Partner, Local Partner..."
+             value="{{ item.category if item and item.category else '' }}" required>
+      <datalist id="sponsor-cat-suggestions">
+        <option value="Title Sponsor">
+        <option value="Principal Partner">
+        <option value="Official Partner">
+        <option value="Main Sponsor">
+        <option value="Kit Partner">
+        <option value="Media Partner">
+        <option value="Community Partner">
+        <option value="Other">
+      </datalist>
+      <p class="text-muted" style="font-size:0.8rem;margin-top:6px;">आफ्नै category लेख्न मिल्छ — सुझाव list बाट पनि छान्न मिल्छ।</p>
+    </div>
+    <div class="form-group">
+      <label>Display Order (size + position)</label>
+      <input type="number" name="order" class="form-control" min="0" max="99"
+             value="{{ item.order if item else 0 }}">
+      <p class="text-muted" style="font-size:0.8rem;margin-top:8px;line-height:1.5;">
+        <strong>0–2</strong> → <span style="color:var(--neon);">BIGGEST</span> (top, ठूलो logo)<br>
+        <strong>3–6</strong> → Medium (बीचमा)<br>
+        <strong>7–9+</strong> → <span style="color:var(--text-muted);">SMALL</span> (last, सानो logo)<br>
+        Example: top 3 partners → order <code>0</code>, <code>1</code>, <code>2</code> · small ones → <code>9</code>
+      </p>
+    </div>
+    <div class="form-group">
+      <label>Logo (PNG/JPG/WEBP)</label>
+      <input type="file" name="logo" class="form-control" accept="image/*">
+      <div class="form-group" style="margin-top:10px;">
+        <label>OR logo URL</label>
+        <input type="url" name="logo_url" class="form-control" placeholder="https://...">
+      </div>
+      {% if item and item.logo %}
+      <p class="text-muted mt-2" style="font-size:0.8rem;">Current: <img src="{{ item.logo|media_url }}" style="height:48px;vertical-align:middle;background:#fff;padding:4px;border-radius:6px;"></p>
+      {% endif %}
+    </div>
+    <div class="form-group">
+      <label><input type="checkbox" name="is_published" {% if not item or item.is_published %}checked{% endif %}> Published (show on homepage)</label>
+    </div>
+    <div style="display:flex;gap:12px;">
+      <button type="submit" class="btn btn-primary">Save</button>
+      <a href="{{ url_for('admin.sponsors_list') }}" class="btn btn-outline">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

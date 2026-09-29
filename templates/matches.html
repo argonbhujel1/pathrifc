@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Matches | Pathari-11 FC{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>Match Centre</h1><p>Fixtures, Results, League &amp; Performers</p></div></div>
+<section class="section">
+  {% if tab == 'results' or tab not in ['upcoming','table','performers'] %}
+  <div class="text-center" style="margin-bottom:20px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
+    <a href="{{ url_for('main.matches', tab='results', year='all') }}" class="btn btn-sm {% if current_year == 'all' or not current_year %}btn-primary{% else %}btn-outline{% endif %}">All</a>
+    {% for y in years|default([]) %}
+    <a href="{{ url_for('main.matches', tab='results', year=y) }}" class="btn btn-sm {% if current_year == y|string %}btn-primary{% else %}btn-outline{% endif %}">{{ y }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+<div class="container">
+  <div class="tabs">
+    <a href="?tab=upcoming" class="{% if tab != 'results' and tab != 'table' and tab != 'performers' %}active{% endif %}">Upcoming</a>
+    <a href="?tab=results" class="{% if tab == 'results' %}active{% endif %}">Results</a>
+    <a href="?tab=table" class="{% if tab == 'table' %}active{% endif %}">League Table</a>
+    <a href="?tab=performers" class="{% if tab == 'performers' %}active{% endif %}">Top Performers</a>
+  </div>
+
+  {% if tab == 'table' %}
+    {% if standings %}
+    <div class="lt-wrap">
+      <h2 class="lt-title">LEAGUE TABLE</h2>
+      <div class="lt-card">
+        <table class="lt-table">
+          <thead>
+            <tr><th>POS</th><th>TEAM NAME</th><th>PLD</th><th>WIN</th><th>LOSS</th><th>GD</th><th>PTS</th></tr>
+          </thead>
+          <tbody>
+          {% for row in standings %}
+          <tr class="{% if row.is_pathari %}lt-highlight{% endif %} {% if loop.index is even %}lt-alt{% endif %}">
+            <td>{{ row.position }}</td>
+            <td class="lt-team">{{ row.team_name }}</td>
+            <td>{{ row.played }}</td>
+            <td>{{ row.won }}</td>
+            <td>{{ row.lost }}</td>
+            <td>{{ row.goals_for - row.goals_against }}</td>
+            <td class="lt-pts">{{ row.points }}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% else %}
+    <div class="coming-soon"><div class="icon">📊</div><h2>League table coming soon</h2><p>Admin → League Table → Add Team</p></div>
+    {% endif %}
+
+  {% elif tab == 'performers' %}
+    {% if performers %}
+    <h2 class="lt-title" style="text-align:right;">TOP PERFORMERS</h2>
+    <div class="tp-list">
+      {% for p in performers %}
+      <div class="tp-card">
+        <div class="tp-info">
+          <div class="tp-cat">{{ p.category|upper }}</div>
+          <div class="tp-stat">{{ p.value }} {% if 'Assist' in p.category %}ASSISTS{% elif 'Clean' in p.category %}CS{% else %}GOALS{% endif %}</div>
+          <div class="tp-name">{{ p.name|upper }}</div>
+        </div>
+        <div class="tp-photo">
+          {% if p.photo %}
+          <img src="{{ p.photo|media_url }}" alt="{{ p.name }}">
+          {% else %}
+          <div class="tp-photo-ph">⚽</div>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="coming-soon"><div class="icon">⭐</div><h2>Top performers coming soon</h2><p>Admin → Top Performers → Add (upload photo or paste URL)</p></div>
+    {% endif %}
+
+  {% elif tab == 'results' %}
+    {% for m in results %}
+    <a href="{{ url_for('main.match_detail', id=m.id) }}" class="match-row">
+      <span class="date">{{ m.match_date.strftime('%d %b %Y') }}</span>
+      <span class="teams">Pathari-11 FC vs {% if m.opponent_logo %}<img src="{{ m.opponent_logo|media_url }}" alt="" style="height:28px;width:28px;object-fit:contain;vertical-align:middle;margin-right:6px;border-radius:50%;background:#fff;"> {% endif %}{{ m.opponent }}</span>
+      <span class="score">{% if m.home_score is not none %}{{ m.home_score }}-{{ m.away_score }}{% else %}—{% endif %}</span>
+      <span class="venue">{{ m.competition }}</span>
+    </a>
+    {% else %}<p class="text-muted">No results available yet.</p>{% endfor %}
+  {% else %}
+    {% for m in upcoming %}
+    <a href="{{ url_for('main.match_detail', id=m.id) }}" class="match-row">
+      <span class="date">{{ m.match_date.strftime('%d %b %Y') }}</span>
+      <span class="teams">Pathari-11 FC vs {% if m.opponent_logo %}<img src="{{ m.opponent_logo|media_url }}" alt="" style="height:28px;width:28px;object-fit:contain;vertical-align:middle;margin-right:6px;border-radius:50%;background:#fff;"> {% endif %}{{ m.opponent }}</span>
+      <span class="venue">{{ m.venue or 'TBC' }} · {{ m.match_date.strftime('%H:%M') }}</span>
+    </a>
+    {% else %}<p class="text-muted">Fixtures will be updated soon.</p>{% endfor %}
+  {% endif %}
+</div></section>
+{% endblock %}

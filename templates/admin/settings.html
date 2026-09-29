@@ -1,0 +1,161 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Settings | Admin{% endblock %}
+{% block content %}
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div style="padding:0 20px 16px;"><strong style="color:var(--text);">PATHARI-11 FC Admin</strong></div>
+    <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('admin.orders_list') }}">Orders</a>
+    <a href="{{ url_for('admin.products_list') }}">Products</a>
+    <a href="{{ url_for('admin.news_list') }}">News</a>
+    <a href="{{ url_for('admin.matches_list') }}">Matches</a>
+    <a href="{{ url_for('admin.league_list') }}">League Table</a>
+    <a href="{{ url_for('admin.performers_list') }}">Top Performers</a>
+    <a href="{{ url_for('admin.players_list') }}">Players</a>
+    <a href="{{ url_for('admin.leadership_list') }}">Leadership</a>
+    <a href="{{ url_for('admin.members_list') }}">Members</a>
+    <a href="{{ url_for('admin.gallery_list') }}">Gallery</a>
+    <a href="{{ url_for('admin.sponsors_list') }}">Sponsors</a>
+    <a href="{{ url_for('admin.messages_list') }}">Messages</a>
+    <a href="{{ url_for('admin.settings') }}" class="active">Settings</a>
+    <a href="{{ url_for('admin.logout') }}">Logout</a>
+  </aside>
+  <div class="admin-main">
+    <h1 style="color:var(--text);margin-bottom:20px;">Site Settings</h1>
+    <form method="POST" enctype="multipart/form-data" class="card" style="padding:24px;max-width:640px;">
+
+      <h3 style="color:var(--neon);margin-bottom:16px;font-size:0.9rem;letter-spacing:1px;">CLUB LOGO &amp; FAVICON</h3>
+      <div class="form-group">
+        <label>Club Logo (navbar + favicon)</label>
+        <input type="file" name="club_logo" class="form-control" accept="image/*">
+        <label style="margin-top:10px;display:block;">OR paste logo URL</label>
+        <input type="url" name="club_logo_url" class="form-control" placeholder="https://...">
+        {% if settings.get('club_logo') %}
+        <p class="mt-2"><img src="{{ settings.get('club_logo')|media_url }}" alt="Logo" style="height:56px;background:#fff;padding:6px;border-radius:8px;"></p>
+        {% endif %}
+      </div>
+
+      <h3 style="color:var(--neon);margin:28px 0 16px;font-size:0.9rem;letter-spacing:1px;">BAM STUDIO / TECH PARTNER</h3>
+      <div class="form-group"><label>Partner Name</label>
+        <input name="bam_name" class="form-control" value="{{ settings.get('bam_name','BAM Studio') }}"></div>
+      <div class="form-group"><label>Partner Website URL</label>
+        <input name="bam_url" class="form-control" value="{{ settings.get('bam_url','https://argan.com.np/') }}"></div>
+      <div class="form-group">
+        <label>Partner Logo (large on homepage)</label>
+        <input type="file" name="bam_logo" class="form-control" accept="image/*">
+        <label style="margin-top:10px;display:block;">OR paste logo URL</label>
+        <input type="url" name="bam_logo_url" class="form-control" placeholder="https://...">
+        {% if settings.get('bam_logo') %}
+        <p class="mt-2"><img src="{{ settings.get('bam_logo')|media_url }}" alt="BAM" style="height:72px;background:#fff;padding:6px;border-radius:8px;"></p>
+        {% endif %}
+      </div>
+
+      <h3 style="color:var(--neon);margin:28px 0 16px;font-size:0.9rem;letter-spacing:1px;">IMAGES — HOMEPAGE &amp; LOADING</h3>
+      <div class="form-group">
+        <label>Homepage background (behind hero)</label>
+        <input type="file" name="home_bg" class="form-control" accept="image/*">
+        <input type="url" name="home_bg_url" class="form-control" placeholder="OR image URL" style="margin-top:8px;">
+        {% if settings.get('home_bg') %}<p class="mt-2"><img src="{{ settings.get('home_bg')|media_url }}" style="max-height:64px;border-radius:8px;"></p>{% endif %}
+      </div>
+      <div class="form-group">
+        <label>Loading / gate screen background</label>
+        <input type="file" name="loading_bg" class="form-control" accept="image/*">
+        <input type="url" name="loading_bg_url" class="form-control" placeholder="OR image URL" style="margin-top:8px;">
+        {% if settings.get('loading_bg') %}<p class="mt-2"><img src="{{ settings.get('loading_bg')|media_url }}" style="max-height:64px;border-radius:8px;"></p>{% endif %}
+      </div>
+      <div class="form-group">
+        <label>Hero right card image (ball box / match visual)</label>
+        <input type="file" name="hero_card" class="form-control" accept="image/*">
+        <input type="url" name="hero_card_url" class="form-control" placeholder="OR image URL" style="margin-top:8px;">
+        {% if settings.get('hero_card') %}<p class="mt-2"><img src="{{ settings.get('hero_card')|media_url }}" style="max-height:64px;border-radius:8px;"></p>{% endif %}
+      </div>
+      <div class="form-group">
+        <label>“More Than A Club” — Pathari / Home of Elephants card image</label>
+        <input type="file" name="about_card" class="form-control" accept="image/*">
+        <input type="url" name="about_card_url" class="form-control" placeholder="OR image URL" style="margin-top:8px;">
+        {% if settings.get('about_card') %}<p class="mt-2"><img src="{{ settings.get('about_card')|media_url }}" style="max-height:64px;border-radius:8px;"></p>{% endif %}
+      </div>
+
+      <h3 style="color:var(--neon);margin:28px 0 16px;font-size:0.9rem;letter-spacing:1px;">GENERAL</h3>
+      <div class="form-group"><label>Site Title</label><input name="site_title" class="form-control" value="{{ settings.get('site_title','') }}"></div>
+      <div class="form-group"><label>Tagline</label><input name="site_tagline" class="form-control" value="{{ settings.get('site_tagline','') }}"></div>
+
+      <h3 style="color:var(--neon);margin:24px 0 16px;font-size:0.9rem;letter-spacing:1px;">CONTACT</h3>
+      <div class="form-group"><label>Email</label><input name="contact_email" class="form-control" value="{{ settings.get('contact_email','') }}"></div>
+      <div class="form-group"><label>Phone</label><input name="contact_phone" class="form-control" value="{{ settings.get('contact_phone','') }}"></div>
+      <div class="form-group"><label>Address</label><input name="contact_address" class="form-control" value="{{ settings.get('contact_address','') }}"></div>
+
+      <h3 style="color:var(--neon);margin:24px 0 16px;font-size:0.9rem;letter-spacing:1px;">SOCIAL LINKS</h3>
+      <div class="form-group"><label>Facebook URL</label><input name="facebook" class="form-control" value="{{ settings.get('facebook','') }}"></div>
+      <div class="form-group"><label>Instagram URL</label><input name="instagram" class="form-control" value="{{ settings.get('instagram','') }}"></div>
+      <div class="form-group"><label>X / Twitter URL</label><input name="twitter" class="form-control" value="{{ settings.get('twitter','') }}"></div>
+      <div class="form-group"><label>YouTube URL</label><input name="youtube" class="form-control" value="{{ settings.get('youtube','') }}"></div>
+
+      <button type="submit" class="btn btn-primary" style="margin-top:12px;">Save Settings</button>
+    
+    <hr style="border-color:var(--glass-border);margin:28px 0;">
+    <h3 style="color:var(--neon);margin-bottom:12px;">Home Stadium Image
+    <div class="form-group"><label>Stadium photo (file)</label>
+      <input type="file" name="home_ground_image" accept="image/*" class="form-control">
+    </div>
+    <div class="form-group"><label>OR stadium URL</label>
+      <input type="url" name="home_ground_image_url" class="form-control">
+    </div>
+    {% if settings.get('home_ground_image') %}
+    <p><img src="{{ settings.get('home_ground_image')|media_url }}" style="max-height:140px;border-radius:10px;"></p>
+    {% endif %}
+    <hr style="margin:24px 0;border-color:var(--glass-border);">
+    Pathari AI (I$H)</h3>
+    <p class="text-muted" style="font-size:0.85rem;margin-bottom:16px;">
+      Pathari Bot — Real AI replies when API key is set (xAI Grok, OpenAI, or any OpenAI-compatible API).
+      Leave key empty to use built-in club FAQ replies only.
+    </p>
+    <div class="form-group">
+      <label><input type="checkbox" name="ai_enabled_cb" {% if settings.get('ai_enabled','true') not in ['0','false','no','off'] %}checked{% endif %}> Enable AI</label>
+    </div>
+    <input type="hidden" name="ai_enabled" id="ai_enabled_val" value="{{ settings.get('ai_enabled','true') }}">
+    <div class="form-group"><label>API Key</label>
+      <input type="password" name="ai_api_key" class="form-control" value="{{ settings.get('ai_api_key','') }}" placeholder="xai-... or sk-..." autocomplete="off">
+    </div>
+    <div class="form-group"><label>API Base URL</label>
+      <input type="url" name="ai_api_base" class="form-control" value="{{ settings.get('ai_api_base','https://api.x.ai/v1') }}" placeholder="https://api.x.ai/v1">
+    </div>
+    <div class="form-group"><label>Model</label>
+      <p class="text-muted" style="font-size:0.8rem;">Use exact ID from xAI docs e.g. <code>grok-3</code>, <code>grok-3-mini</code>, <code>grok-4.6</code> — not grok-2-latest</p>
+      <input type="text" name="ai_model" class="form-control" value="{{ settings.get('ai_model','grok-3') }}" placeholder="grok-3 or grok-3-mini or grok-4.6">
+    </div>
+    <div class="form-group"><label>System prompt (personality)</label>
+      <textarea name="ai_system_prompt" class="form-control" rows="5" placeholder="You are Pathari...">{{ settings.get('ai_system_prompt','') }}</textarea>
+    </div>
+    <script>
+    (function(){
+      var cb = document.querySelector('[name=ai_enabled_cb]');
+      var hid = document.getElementById('ai_enabled_val');
+      if(cb && hid){
+        function sync(){ hid.value = cb.checked ? 'true' : 'false'; }
+        cb.addEventListener('change', sync); sync();
+      }
+    })();
+    </script>
+
+</form>
+
+    <div class="card" style="padding:20px;max-width:640px;margin-top:24px;">
+      <h3 style="color:var(--text);margin-bottom:12px;">Where to upload images</h3>
+      <ul class="text-muted" style="font-size:0.9rem;line-height:1.8;">
+        <li><strong>Top Performers</strong> — Admin → Top Performers (photo + stats)</li>
+        <li><strong>League Table</strong> — Admin → League Table</li>
+        <li><strong>Squad / Players</strong> — Admin → Players</li>
+        <li><strong>Leadership</strong> — Admin → Leadership</li>
+        <li><strong>Gallery</strong> — Admin → Gallery</li>
+        <li><strong>Sponsors</strong> — Admin → Sponsors (Title / Principal / Official)</li>
+        <li><strong>Products</strong> — Admin → Products</li>
+        <li><strong>News</strong> — Admin → News</li>
+        <li><strong>Club Logo</strong> — this page</li>
+        <li><strong>BAM Studio Logo</strong> — this page</li>
+        <li><strong>Homepage background</strong> — this page</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

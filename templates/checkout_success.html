@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmed | Pathari-11 FC{% endblock %}
+{% block content %}
+<section class="section"><div class="container">
+  <div class="coming-soon" style="max-width:500px;margin:40px auto;">
+    <div class="icon">✅</div>
+    <h2>Order Placed Successfully!</h2>
+    <p>Order Number: <strong style="color:var(--primary-light);">{{ order.order_number }}</strong></p>
+    <p class="text-muted">Thank you, {{ order.customer_name }}. We will contact you shortly.</p>
+    <a href="{{ url_for('main.index') }}" class="btn btn-primary mt-2">Back to Home</a>
+  </div>
+</div></section>
+{% endblock %}

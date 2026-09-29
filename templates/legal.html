@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }} | Pathari-11 FC{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>{{ page_title }}</h1><p>Pathari-11 FC · Official</p></div></div>
+<section class="section"><div class="container" style="max-width:800px;">
+  <div class="card" style="padding:32px;line-height:1.75;color:var(--text);">
+
+  {% if page_key == 'privacy' %}
+  <p>Pathari-11 FC (“we”, “our”, “the Club”) respects your privacy. This policy explains how we collect and use information on pathari11fc.vercel.app and related club digital services.</p>
+  <h3 style="color:var(--neon);margin-top:24px;">Information we collect</h3>
+  <ul>
+    <li>Contact form submissions (name, email, phone, message)</li>
+    <li>Membership registration details you provide</li>
+    <li>Shop order details (name, address, phone, items)</li>
+    <li>Basic technical data (browser type, approximate location via host)</li>
+  </ul>
+  <h3 style="color:var(--neon);margin-top:24px;">How we use it</h3>
+  <ul>
+    <li>To respond to enquiries and manage membership</li>
+    <li>To process merchandise orders and deliveries</li>
+    <li>To improve the website and fan experience</li>
+  </ul>
+  <h3 style="color:var(--neon);margin-top:24px;">Sharing</h3>
+  <p>We do not sell your personal data. Data may be processed by trusted providers (hosting, database, image CDN, payment verification) solely to run club services.</p>
+  <h3 style="color:var(--neon);margin-top:24px;">Contact</h3>
+  <p>For privacy requests, use the <a href="{{ url_for('main.contact') }}">Contact</a> page{% if contact_email %} or email {{ contact_email }}{% endif %}.</p>
+
+  {% elif page_key == 'terms' %}
+  <p>By using the official Pathari-11 FC website and services, you agree to these Terms &amp; Conditions.</p>
+  <h3 style="color:var(--neon);margin-top:24px;">Use of the site</h3>
+  <p>Content is for personal, non-commercial use unless authorised by the Club. Do not misuse forms, attempt unauthorised access, or disrupt services.</p>
+  <h3 style="color:var(--neon);margin-top:24px;">Membership &amp; shop</h3>
+  <p>Membership benefits and product availability are as stated at the time of purchase. Prices are in NPR unless noted. The Club may update offers and content without prior notice.</p>
+  <h3 style="color:var(--neon);margin-top:24px;">Intellectual property</h3>
+  <p>Pathari-11 FC name, crest, and related marks belong to the Club. Official media remains Club property.</p>
+  <h3 style="color:var(--neon);margin-top:24px;">Liability</h3>
+  <p>The site is provided as available. We are not liable for indirect losses arising from use of the site, subject to applicable law in Nepal.</p>
+
+  {% elif page_key == 'shipping' %}
+  <p>This Shipping Policy applies to merchandise ordered through the Official Pathari-11 FC Store.</p>
+  <h3 style="color:var(--neon);margin-top:24px;">Delivery area</h3>
+  <p>Orders are primarily fulfilled within Nepal. International shipping may be arranged case-by-case — contact the Club after ordering.</p>
+  <h3 style="color:var(--neon);margin-top:24px;">Processing time</h3>
+  <p>Orders are typically processed within 2–5 business days after payment verification. Custom jerseys may take longer.</p>
+  <h3 style="color:var(--neon);margin-top:24px;">Fees &amp; tracking</h3>
+  <p>Shipping fees (if any) are confirmed during order handling. Tracking details are shared when available via phone or email used at checkout.</p>
+
+  {% elif page_key == 'returns' %}
+  <p>This Return Policy applies to official store purchases.</p>
+  <h3 style="color:var(--neon);margin-top:24px;">Eligible returns</h3>
+  <ul>
+    <li>Unused items in original condition within 7 days of delivery</li>
+    <li>Defective or incorrect items reported promptly with photo proof</li>
+  </ul>
+  <h3 style="color:var(--neon);margin-top:24px;">Non-returnable</h3>
+  <p>Custom-printed jerseys and personalised items are generally non-returnable unless faulty.</p>
+  <h3 style="color:var(--neon);margin-top:24px;">How to request</h3>
+  <p>Contact us via the <a href="{{ url_for('main.contact') }}">Contact</a> page with order number and reason. Approved refunds follow the original payment method after item inspection.</p>
+  {% endif %}
+
+  <p class="text-muted" style="margin-top:32px;font-size:0.85rem;">Last updated: September 2026 · Pathari-11 FC</p>
+  </div>
+</div></section>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}League Table | Admin{% endblock %}
+{% block content %}
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div style="padding:0 20px 16px;"><strong style="color:var(--text);">PATHARI-11 FC Admin</strong></div>
+    <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('admin.orders_list') }}">Orders</a>
+    <a href="{{ url_for('admin.products_list') }}">Products</a>
+    <a href="{{ url_for('admin.news_list') }}">News</a>
+    <a href="{{ url_for('admin.matches_list') }}">Matches</a>
+    <a href="{{ url_for('admin.league_list') }}">League Table</a>
+    <a href="{{ url_for('admin.performers_list') }}">Top Performers</a>
+    <a href="{{ url_for('admin.players_list') }}">Players</a>
+    <a href="{{ url_for('admin.leadership_list') }}">Leadership</a>
+    <a href="{{ url_for('admin.members_list') }}">Members</a>
+    <a href="{{ url_for('admin.gallery_list') }}">Gallery</a>
+    <a href="{{ url_for('admin.sponsors_list') }}">Sponsors</a>
+    <a href="{{ url_for('admin.messages_list') }}">Messages</a>
+    <a href="{{ url_for('admin.settings') }}">Settings</a>
+    <a href="{{ url_for('admin.logout') }}">Logout</a>
+  </aside>
+  <div class="admin-main">
+    <div class="admin-header-bar">
+      <h1>League Table</h1>
+      <a href="{{ url_for('admin.league_edit') }}" class="btn btn-primary">+ Add Team</a>
+    </div>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>Pts</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for item in items %}
+        <tr {% if item.is_pathari %}style="background:rgba(0,240,255,0.08);"{% endif %}>
+          <td>{{ item.position }}</td>
+          <td>{{ item.team_name }}{% if item.is_pathari %} ★{% endif %}</td>
+          <td>{{ item.played }}</td><td>{{ item.won }}</td><td>{{ item.drawn }}</td><td>{{ item.lost }}</td>
+          <td>{{ item.goals_for }}</td><td>{{ item.goals_against }}</td><td><strong>{{ item.points }}</strong></td>
+          <td class="admin-actions">
+            <a href="{{ url_for('admin.league_edit', id=item.id) }}" class="btn btn-ghost btn-sm">Edit</a>
+            <form method="POST" action="{{ url_for('admin.league_delete', id=item.id) }}" onsubmit="return pathariConfirmDelete(this, 'Delete this item?', 'This cannot be undone.');">
+              <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--danger);">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}<tr><td colspan="10">No rows yet. Add teams for the league table.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

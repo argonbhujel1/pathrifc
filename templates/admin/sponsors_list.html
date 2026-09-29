@@ -1,0 +1,60 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Sponsors | Admin{% endblock %}
+{% block content %}
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div style="padding:0 20px 20px;"><strong style="color:#fff;">PATHARI-11 FC Admin</strong></div>
+    <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('admin.orders_list') }}">Orders</a>
+    <a href="{{ url_for('admin.products_list') }}">Products</a>
+    <a href="{{ url_for('admin.news_list') }}">News</a>
+    <a href="{{ url_for('admin.matches_list') }}">Matches</a>
+    <a href="{{ url_for('admin.league_list') }}">League Table</a>
+    <a href="{{ url_for('admin.performers_list') }}">Top Performers</a>
+    <a href="{{ url_for('admin.players_list') }}">Players</a>
+    <a href="{{ url_for('admin.leadership_list') }}">Leadership</a>
+    <a href="{{ url_for('admin.members_list') }}">Members</a>
+    <a href="{{ url_for('admin.gallery_list') }}">Gallery</a>
+    <a href="{{ url_for('admin.sponsors_list') }}" class="active">Sponsors</a>
+    <a href="{{ url_for('admin.messages_list') }}">Messages</a>
+    <a href="{{ url_for('admin.settings') }}">Settings</a>
+    <a href="{{ url_for('admin.logout') }}">Logout</a>
+  </aside>
+  <div class="admin-main">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+      <h1 style="color:#fff;margin:0;">Sponsors &amp; Partners</h1>
+      <a href="{{ url_for('admin.sponsor_edit') }}" class="btn btn-primary">+ Add Sponsor</a>
+    </div>
+    <p class="text-muted mb-2">Upload partner logos here. They appear on the homepage between Official Store and BAM Studio. Clickable if website URL is set. BAM Studio (Tech Partner) is fixed on homepage only.</p>
+    <table class="admin-table">
+      <thead>
+        <tr><th>Logo</th><th>Name</th><th>Category</th><th>Website</th><th>Published</th><th>Order</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>
+            {% if item.logo %}
+            <img src="{{ item.logo|media_url }}" alt="" style="height:40px;width:auto;border-radius:6px;background:#fff;padding:2px;">
+            {% else %}—{% endif %}
+          </td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.category }}</td>
+          <td>{% if item.website %}<a href="{{ item.website }}" target="_blank">Link</a>{% else %}—{% endif %}</td>
+          <td>{% if item.is_published %}✓{% else %}—{% endif %}</td>
+          <td>{{ item.order }}</td>
+          <td style="display:flex;gap:8px;">
+            <a href="{{ url_for('admin.sponsor_edit', id=item.id) }}" class="btn btn-ghost" style="padding:6px 10px;">Edit</a>
+            <form method="POST" action="{{ url_for('admin.sponsor_delete', id=item.id) }}" onsubmit="return pathariConfirmDelete(this, 'Delete this sponsor?', 'Sponsor logo will be removed from the site.');">
+              <button type="submit" class="btn btn-ghost" style="padding:6px 10px;color:var(--danger);">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-muted">No sponsors yet. Click “Add Sponsor”.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

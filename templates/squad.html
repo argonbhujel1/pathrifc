@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Our Squad | Pathari-11 FC{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1>OUR SQUAD</h1>
+    <p>Pride of Pathari</p>
+  </div>
+</div>
+<section class="section squad-section">
+  <div class="container">
+    <div class="squad-heading-row">
+      <h2 class="squad-heading">OUR SQUAD MEMBERS</h2>
+      <span class="squad-line"></span>
+    </div>
+    {% if players %}
+    <div class="squad-shield-grid">
+      {% for p in players %}
+      <a href="{{ url_for('main.player', id=p.id) }}" class="shield-card">
+        <div class="shield-inner">
+          <div class="shield-photo">
+            {% if p.photo %}
+            <img src="{{ p.photo|media_url }}" alt="{{ p.name }}" loading="lazy">
+            {% else %}
+            <div class="shield-ph">⚽</div>
+            {% endif %}
+          </div>
+          <div class="shield-info">
+            <div class="shield-name">{{ (p.name or 'Player')|upper }}</div>
+            <div class="shield-role">
+              {% if p.number %}#{{ p.number }} · {% endif %}{{ p.position or 'Player' }}
+            </div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="coming-soon">
+      <div class="icon">👥</div>
+      <h2>PLAYER INFORMATION COMING SOON</h2>
+      <p>Official squad will appear when published from Admin → Players.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

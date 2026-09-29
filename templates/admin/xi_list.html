@@ -1,0 +1,37 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}All-Time XI | Admin{% endblock %}
+{% block content %}
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div style="padding:0 20px 16px;"><strong>PATHARI-11 FC Admin</strong></div>
+    <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('admin.xi_list') }}">All-Time XI</a>
+    <a href="{{ url_for('admin.logout') }}">Logout</a>
+  </aside>
+  <div class="admin-main">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h1 style="color:var(--text);margin:0;">All-Time XI</h1>
+      <a href="{{ url_for('admin.xi_edit') }}" class="btn btn-primary">+ Add</a>
+    </div>
+    <table class="admin-table">
+      <thead><tr><th>ID</th><th>position</th><th>name</th><th>number</th><th>note</th><th></th></tr></thead>
+      <tbody>
+      {% for item in items %}
+      <tr>
+        <td>{{ item.id }}</td>
+        <td>{{ item.position or "—" }}</td><td>{{ item.name or "—" }}</td><td>{{ item.number or "—" }}</td><td>{{ item.note or "—" }}</td>
+        <td>
+          <a href="{{ url_for('admin.xi_edit', id=item.id) }}" class="btn btn-ghost btn-sm">Edit</a>
+          <form method="POST" action="{{ url_for('admin.xi_delete', id=item.id) }}" style="display:inline;" onsubmit="return pathariConfirmDelete(this,'Delete?','Remove this item?');">
+            <button type="submit" class="btn btn-ghost btn-sm">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="12">No items yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

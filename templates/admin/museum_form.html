@@ -1,0 +1,26 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Museum Item | Admin{% endblock %}
+{% block content %}
+<div class="container" style="max-width:640px;padding:40px 20px;">
+  <h2 style="color:var(--text);">{{ 'Edit' if item else 'New' }} Museum Item</h2>
+  <form method="POST" enctype="multipart/form-data" class="card" style="padding:24px;">
+    <div class="form-group"><label>Title *</label><input name="title" class="form-control" value="{{ item.title if item else '' }}" required></div>
+    <div class="form-group"><label>Category</label>
+      <select name="category" class="form-control">
+        {% for c in ['Photo','Kit','Trophy','Poster','Ticket','Document'] %}
+        <option value="{{ c }}" {% if item and item.category==c %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group"><label>Year</label><input name="year" class="form-control" value="{{ item.year if item else '' }}"></div>
+    <div class="form-group"><label>Description</label><textarea name="description" class="form-control" rows="3">{{ item.description if item else '' }}</textarea></div>
+    <div class="form-group"><label>Image file</label><input type="file" name="image" accept="image/*" class="form-control"></div>
+    <div class="form-group"><label>OR image URL</label><input type="url" name="image_url" class="form-control" placeholder="https://..."></div>
+    {% if item and item.image %}<p><img src="{{ item.image|media_url }}" style="max-height:120px;border-radius:8px;"></p>{% endif %}
+    <div class="form-group"><label>Order</label><input type="number" name="order" class="form-control" value="{{ item.order if item else 0 }}"></div>
+    <div class="form-group"><label><input type="checkbox" name="is_published" {% if not item or item.is_published %}checked{% endif %}> Published</label></div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{{ url_for('admin.museum_list') }}" class="btn btn-outline">Cancel</a>
+  </form>
+</div>
+{% endblock %}

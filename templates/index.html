@@ -1,0 +1,496 @@
+{% extends "base.html" %}
+{% block title %}Pathari-11 FC | Official Football Club{% endblock %}
+
+{% block content %}
+<section class="hero"{% if home_bg %} style="--home-bg: url('{{ home_bg|media_url }}')"{% endif %}>
+  <div class="container">
+    <div class="hero-content">
+      <span class="hero-badge">Pride of Pathari</span>
+      <h1>PATHARI-11 FC</h1>
+      <p class="headline">ONE CLUB. ONE PRIDE.</p>
+      <p>The Pride of Pathari — representing passion, unity and excellence on the pitch.</p>
+      <div class="hero-btns">
+        <a href="{{ url_for('main.matches') }}" class="btn btn-primary">MATCH CENTRE</a>
+        <a href="{{ url_for('shop.shop') }}" class="btn btn-outline">SHOP OFFICIAL KIT</a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    {% if hero_card %}
+    <div class="hero-card-img">
+      <img src="{{ hero_card|media_url }}" alt="Pathari-11 FC" loading="lazy">
+    </div>
+    {% else %}
+    <div class="placeholder-team">⚽</div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Next Match</h2>
+    <p class="section-sub">Upcoming fixture</p>
+    {% if next_match %}
+    <div class="next-match">
+      <div class="match-meta">
+        {{ next_match.competition }} · {{ next_match.match_date.strftime('%A, %d %B %Y') }} · {{ next_match.match_date.strftime('%H:%M') }}
+        {% if next_match.venue %} · {{ next_match.venue }}{% endif %}
+      </div>
+      <div class="vs-row">
+        <div class="team-box">
+          <div class="crest">{% if club_logo %}<img src="{{ club_logo|media_url }}" alt="Pathari-11 FC" style="width:100%;height:100%;object-fit:contain;border-radius:50%;">{% else %}⚽{% endif %}</div>
+          <h3>Pathari-11 FC</h3>
+        </div>
+        <div class="vs-badge">VS</div>
+        <div class="team-box">
+          <div class="crest">{% if next_match.opponent_logo %}<img src="{{ next_match.opponent_logo|media_url }}" alt="{{ next_match.opponent }}" style="width:100%;height:100%;object-fit:contain;border-radius:50%;background:#fff;">{% else %}⚽{% endif %}</div>
+          <h3>{{ next_match.opponent }}</h3>
+        </div>
+      </div>
+      <div class="countdown" id="countdown" data-date="{{ next_match.match_date.isoformat() }}">
+        <div class="countdown-item"><span class="num" id="cd-days">--</span><span class="label">Days</span></div>
+        <div class="countdown-item"><span class="num" id="cd-hours">--</span><span class="label">Hours</span></div>
+        <div class="countdown-item"><span class="num" id="cd-mins">--</span><span class="label">Mins</span></div>
+        <div class="countdown-item"><span class="num" id="cd-secs">--</span><span class="label">Secs</span></div>
+      </div>
+      <div class="mt-3">
+        <a href="{{ url_for('main.match_detail', id=next_match.id) }}" class="btn btn-outline">Match Details</a>
+      </div>
+    </div>
+    {% else %}
+    <div class="coming-soon">
+      <div class="icon">📅</div>
+      <h2>Official fixture information coming soon</h2>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section home-performers-section">
+  <div class="container">
+    <div class="season-note card" style="padding:20px 24px;margin-bottom:36px;text-align:center;">
+      <p style="color:var(--neon);font-weight:600;margin:0;letter-spacing:1px;">📅 SATISA GOLD CUP CHAMPIONS</p>
+      <p class="text-muted" style="margin:8px 0 0;">Champions of the 2nd Satisa Gold Cup (Dec 2025). Hosts of Pathari Shanishchare Gold Cup. Full results on Matches.</p>
+      <div class="mt-2">
+        <a href="{{ url_for('main.matches', tab='results') }}" class="btn btn-outline btn-sm">View Results</a>
+      </div>
+    </div>
+
+    <h2 class="section-title">TOP PERFORMERS</h2>
+    <p class="section-sub">Top performers till now</p>
+    {% if performers %}
+    <div class="tp-home-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;">
+      {% for p in performers %}
+      <div class="tp-card tp-card-neon" style="display:flex;align-items:center;gap:14px;padding:14px 18px;">
+        <div class="tp-photo" style="width:72px;height:72px;flex-shrink:0;border-radius:50%;overflow:hidden;border:2px solid rgba(0,240,255,0.35);">
+          {% if p.photo %}
+          <img src="{{ p.photo|media_url }}" alt="{{ p.name }}" style="width:100%;height:100%;object-fit:cover;">
+          {% else %}
+          <div class="tp-photo-ph" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">⚽</div>
+          {% endif %}
+        </div>
+        <div class="tp-info" style="text-align:left;">
+          <div class="tp-cat" style="font-size:0.7rem;">{{ p.category|upper }}{% if p.season %} · {{ p.season }}{% endif %}</div>
+          <div class="tp-name" style="font-size:1.05rem;">{{ p.name|upper }}</div>
+          <div class="tp-stat" style="font-size:0.9rem;">{{ p.value }} {% if 'Assist' in p.category %}ASSISTS{% elif 'Clean' in p.category or 'Best' in p.category or 'Player' in p.category %}{% if 'Best' in p.category or 'Player' in p.category %}AWARD{% else %}CS{% endif %}{% else %}GOAL{% if p.value != 1 %}S{% endif %}{% endif %}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="mt-2 text-center">
+      <a href="{{ url_for('main.matches', tab='performers') }}" class="btn btn-outline btn-sm">View All</a>
+    </div>
+    {% else %}
+    <div class="coming-soon" style="padding:24px;">
+      <h2>Top performers coming soon</h2>
+      <p>Admin → Top Performers</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Latest News</h2>
+    <p class="section-sub">From the club and the pitch</p>
+    <div class="grid-4">
+      {% for article in latest_news %}
+      <a href="{{ url_for('main.news_detail', slug=article.slug) }}" class="card news-card">
+        <div class="thumb">
+          {% if article.featured_image %}
+          <img src="{{ article.featured_image|media_url }}" alt="{{ article.title }}" loading="lazy">
+          {% else %}📰{% endif %}
+        </div>
+        <div class="body">
+          <div class="cat">{{ article.category }}</div>
+          <h3>{{ article.title }}</h3>
+          <p>{{ article.excerpt[:90] if article.excerpt else '' }}{% if article.excerpt and article.excerpt|length > 90 %}…{% endif %}</p>
+          <div class="meta">{{ article.publish_date.strftime('%d %b %Y') if article.publish_date else '' }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-3">
+      <a href="{{ url_for('main.news') }}" class="btn btn-outline">All News</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:rgba(15,39,68,0.35);">
+  <div class="container">
+    <h2 class="section-title">More Than A Club</h2>
+    <p class="section-sub">The Pride of Pathari</p>
+    <div class="grid-2" style="align-items:center;">
+      <div>
+        {% if about %}
+        <p style="color:var(--text-muted);font-size:1.05rem;line-height:1.7;">{{ about.content }}</p>
+        {% endif %}
+        <div class="grid-3 mt-3" style="gap:12px;">
+          {% if vision %}
+          <div class="card" style="padding:16px;">
+            <h4 style="color:var(--primary-light);margin-bottom:6px;">{{ vision.title }}</h4>
+            <p style="font-size:0.85rem;color:var(--text-muted);">{{ vision.content[:100] }}…</p>
+          </div>
+          {% endif %}
+          {% if mission %}
+          <div class="card" style="padding:16px;">
+            <h4 style="color:var(--primary-light);margin-bottom:6px;">{{ mission.title }}</h4>
+            <p style="font-size:0.85rem;color:var(--text-muted);">{{ mission.content[:100] }}…</p>
+          </div>
+          {% endif %}
+          {% if values %}
+          <div class="card" style="padding:16px;">
+            <h4 style="color:var(--primary-light);margin-bottom:6px;">{{ values.title }}</h4>
+            <p style="font-size:0.85rem;color:var(--text-muted);">{{ values.content }}</p>
+          </div>
+          {% endif %}
+        </div>
+        <a href="{{ url_for('main.club') }}" class="btn btn-primary mt-3">About the Club</a>
+      </div>
+      <div class="about-side-card">
+        {% if about_card %}
+        <img src="{{ about_card|media_url }}" alt="Home of Pathari-11" class="about-side-img" loading="lazy">
+        {% else %}
+        <div class="icon" style="font-size:2.5rem;">🏔️</div>
+        {% endif %}
+        <h2>Pathari</h2>
+        <p>Home of Pathari-11</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Our Squad</h2>
+    <p class="section-sub">Pride of Pathari</p>
+    {% if squad_preview %}
+    <div class="squad-heading-row" style="margin-bottom:28px;">
+      <h2 class="squad-heading" style="font-size:1.2rem;">OUR SQUAD MEMBERS</h2>
+      <span class="squad-line"></span>
+      <a href="{{ url_for('main.squad') }}" class="squad-view-all">VIEW ALL SQUAD »</a>
+    </div>
+    <div class="squad-shield-grid">
+      {% for pl in squad_preview %}
+      <a href="{{ url_for('main.player', id=pl.id) }}" class="shield-card">
+        <div class="shield-inner">
+          <div class="shield-photo">
+            {% if pl.photo %}
+            <img src="{{ pl.photo|media_url }}" alt="{{ pl.name }}" loading="lazy">
+            {% else %}
+            <div class="shield-ph">⚽</div>
+            {% endif %}
+          </div>
+          <div class="shield-info">
+            <div class="shield-name">{{ (pl.name or 'Player')|upper }}</div>
+            <div class="shield-role">{% if pl.number %}#{{ pl.number }} · {% endif %}{{ pl.position or 'Player' }}</div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="coming-soon">
+      <div class="icon">⚽</div>
+      <h2>Official information coming soon</h2>
+      <p>Publish players from Admin → Players (tick Published) to show them here.</p>
+      <a href="{{ url_for('main.squad') }}" class="btn btn-outline mt-2">View Squad Page</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section" style="background:rgba(15,39,68,0.4);">
+  <div class="container">
+    <h2 class="section-title">Official Store</h2>
+    <p class="section-sub">Official merchandise</p>
+    <div class="grid-4">
+      {% for p in featured_products %}
+      <a href="{{ url_for('shop.product', slug=p.slug) }}" class="card product-card">
+        <div class="thumb">
+          {% if p.image %}
+          <img src="{{ p.image|media_url }}" alt="{{ p.name }}" loading="lazy">
+          {% else %}👕{% endif %}
+        </div>
+        <div class="body">
+          <h3>{{ p.name }}</h3>
+          <div class="price">Rs. {{ "{:,.0f}".format(p.price) }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-3">
+      <a href="{{ url_for('shop.shop') }}" class="btn btn-primary">Visit Full Store</a>
+      <a href="{{ url_for('shop.custom_jersey') }}" class="btn btn-outline" style="margin-left:10px;">Make Your Own Jersey</a>
+    </div>
+  </div>
+</section>
+
+{# —— Homepage hub: quick access to all areas —— #}
+<section class="section" id="explore">
+  <div class="container">
+    <h2 class="section-title">Explore Pathari-11 FC</h2>
+    <p class="section-sub">Everything in one place</p>
+    <div class="grid-4" style="gap:14px;">
+      <a href="{{ url_for('main.matches') }}" class="card" style="padding:20px;text-align:center;text-decoration:none;">
+        <div style="font-size:1.6rem;">📅</div>
+        <strong style="color:#fff;">Matches</strong>
+        <p class="text-muted" style="font-size:0.8rem;margin-top:6px;">Fixtures · Results · Table</p>
+      </a>
+      <a href="{{ url_for('main.squad') }}" class="card" style="padding:20px;text-align:center;text-decoration:none;">
+        <div style="font-size:1.6rem;">👥</div>
+        <strong style="color:#fff;">Squad</strong>
+        <p class="text-muted" style="font-size:0.8rem;margin-top:6px;">Players & profiles</p>
+      </a>
+      <a href="{{ url_for('main.news') }}" class="card" style="padding:20px;text-align:center;text-decoration:none;">
+        <div style="font-size:1.6rem;">📰</div>
+        <strong style="color:#fff;">News</strong>
+        <p class="text-muted" style="font-size:0.8rem;margin-top:6px;">Club updates</p>
+      </a>
+      <a href="{{ url_for('shop.shop') }}" class="card" style="padding:20px;text-align:center;text-decoration:none;">
+        <div style="font-size:1.6rem;">🛍️</div>
+        <strong style="color:#fff;">Store</strong>
+        <p class="text-muted" style="font-size:0.8rem;margin-top:6px;">Kits & merch</p>
+      </a>
+      <a href="{{ url_for('main.club') }}#hall-of-fame" class="card" style="padding:20px;text-align:center;text-decoration:none;">
+        <div style="font-size:1.6rem;">⭐</div>
+        <strong style="color:#fff;">Hall of Fame</strong>
+        <p class="text-muted" style="font-size:0.8rem;margin-top:6px;">Legends & icons</p>
+      </a>
+      <a href="{{ url_for('main.club') }}" class="card" style="padding:20px;text-align:center;text-decoration:none;">
+        <div style="font-size:1.6rem;">🏆</div>
+        <strong style="color:#fff;">Club & Trophies</strong>
+        <p class="text-muted" style="font-size:0.8rem;margin-top:6px;">History · Ground</p>
+      </a>
+      <a href="{{ url_for('main.gallery') }}" class="card" style="padding:20px;text-align:center;text-decoration:none;">
+        <div style="font-size:1.6rem;">📸</div>
+        <strong style="color:#fff;">Gallery</strong>
+        <p class="text-muted" style="font-size:0.8rem;margin-top:6px;">Matchday moments</p>
+      </a>
+      <a href="{{ url_for('main.membership') }}" class="card" style="padding:20px;text-align:center;text-decoration:none;">
+        <div style="font-size:1.6rem;">🎫</div>
+        <strong style="color:#fff;">Membership</strong>
+        <p class="text-muted" style="font-size:0.8rem;margin-top:6px;">Join the herd</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+{% if all_time_xi %}
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">All-Time XI</h2>
+    <p class="section-sub">Notable XI across club eras</p>
+    <div class="grid-4" style="gap:12px;">
+      {% for x in all_time_xi %}
+      <div class="card" style="padding:14px;text-align:center;">
+        <div style="width:64px;height:64px;margin:0 auto 8px;border-radius:50%;overflow:hidden;border:2px solid rgba(0,240,255,0.3);background:#0a1628;">
+          {% if x.photo %}<img src="{{ x.photo|media_url }}" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center 15%;" loading="lazy">{% else %}<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;color:var(--neon);">{{ x.position }}</div>{% endif %}
+        </div>
+        <div style="color:var(--neon);font-size:0.7rem;font-weight:700;">{{ x.position }}{% if x.number %} #{{ x.number }}{% endif %}</div>
+        <div style="color:#fff;font-weight:700;font-size:0.9rem;">{{ x.name }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-3"><a href="{{ url_for('main.club') }}" class="btn btn-outline btn-sm">Full Club History</a></div>
+  </div>
+</section>
+{% endif %}
+
+{% if hall_preview %}
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Hall of Fame</h2>
+    <p class="section-sub">Documented achievements</p>
+    <div class="grid-3">
+      {% for h in hall_preview %}
+      <div class="card" style="padding:18px;">
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div style="width:56px;height:56px;border-radius:50%;overflow:hidden;background:#0a1628;flex-shrink:0;">
+            {% if h.photo %}<img src="{{ h.photo|media_url }}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">{% else %}⭐{% endif %}
+          </div>
+          <div>
+            <div style="color:#fff;font-weight:700;">{{ h.name }}</div>
+            <div class="text-muted" style="font-size:0.8rem;">{{ h.achievement or h.role }}</div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-3"><a href="{{ url_for('main.club') }}#hall-of-fame" class="btn btn-outline btn-sm">View Hall of Fame</a></div>
+  </div>
+</section>
+{% endif %}
+
+{% if membership_plans %}
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Membership</h2>
+    <p class="section-sub">Join Pathari-11</p>
+    <div class="grid-4" style="gap:14px;">
+      {% for p in membership_plans %}
+      <div class="card" style="padding:20px;text-align:center;">
+        <div style="color:var(--neon);font-weight:800;letter-spacing:1px;">{{ p.name|upper }}</div>
+        <div style="color:#fff;font-size:1.4rem;font-weight:700;margin:8px 0;">
+          {% if p.price and p.price|float > 0 %}Rs. {{ "{:,.0f}".format(p.price|float) }}{% else %}FREE{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-3"><a href="{{ url_for('main.membership') }}" class="btn btn-primary">Become a Member</a></div>
+  </div>
+</section>
+{% endif %}
+
+{% if gallery_preview %}
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Gallery</h2>
+    <div class="grid-4" style="gap:12px;">
+      {% for g in gallery_preview %}
+      <a href="{{ url_for('main.gallery') }}" class="card" style="padding:0;overflow:hidden;aspect-ratio:1;">
+        {% if g.image %}<img src="{{ g.image|media_url }}" alt="" style="width:100%;height:100%;object-fit:cover;" loading="lazy">{% endif %}
+      </a>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-3"><a href="{{ url_for('main.gallery') }}" class="btn btn-outline btn-sm">Full Gallery</a></div>
+  </div>
+</section>
+{% endif %}
+
+
+{% endblock %}
+
+{% block tech_partner %}
+<section class="tech-partner">
+  <div class="container text-center">
+    <span class="badge">OFFICIAL TECH PARTNER</span>
+    <h2>Powered by {{ bam_name or 'BAM Studio' }}</h2>
+    <p class="powered">WEB &amp; TECHNOLOGY PARTNER</p>
+    <p class="desc">
+      The official technology partner behind the Pathari-11 FC digital experience,
+      website, membership platform, online store and community technology.
+    </p>
+    <div class="services">
+      <span>Website Design &amp; Development</span>
+      <span>Fan Membership Platform</span>
+      <span>Online Store &amp; E-commerce</span>
+      <span>Admin Dashboard &amp; Backend</span>
+      <span>Digital Fan Experience</span>
+      <span>Website Maintenance &amp; Technology Support</span>
+    </div>
+    <div class="bam-brand bam-brand-lg">
+      {% if bam_logo %}
+      <img src="{{ bam_logo|media_url }}" alt="{{ bam_name or 'BAM Studio' }}" class="bam-logo-img">
+      {% else %}
+      <div class="bam-logo bam-logo-lg">B</div>
+      {% endif %}
+      <div class="bam-text">
+        <strong>{{ bam_name or 'BAM STUDIO' }}</strong>
+        <span>WEB &amp; TECHNOLOGY PARTNER</span>
+      </div>
+    </div>
+    <div class="mt-3">
+      <a href="{{ bam_url or 'https://argan.com.np/' }}" target="_blank" rel="noopener" class="btn btn-primary">VISIT {{ bam_name or 'BAM STUDIO' }} →</a>
+    </div>
+  </div>
+</section>
+
+<!-- Our Partners / Sponsors -->
+<section class="section sponsors-section">
+  <div class="container text-center">
+    <p class="sponsors-eyebrow">— POWERED BY —</p>
+    <h2 class="section-title sponsors-heading">OUR <span>PARTNERS.</span></h2>
+    <p class="section-sub">The brands that stand with Pride of Pathari.</p>
+
+        {% if sponsors %}
+    {% if sponsor_big %}
+    <p class="sponsor-tier-label">TOP PARTNERS</p>
+    <div class="sponsors-tier sponsors-tier-title">
+      {% for s in sponsor_big %}
+      <a href="{{ s.website or '#' }}" {% if s.website %}target="_blank" rel="noopener"{% endif %} class="sponsor-logo-card sponsor-title-card" title="{{ s.name }}{% if s.category %} · {{ s.category }}{% endif %}">
+        {% if s.logo %}<img src="{{ s.logo|media_url }}" alt="{{ s.name }}" loading="lazy">{% else %}<span>{{ s.name }}</span>{% endif %}
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if sponsor_mid %}
+    <p class="sponsor-tier-label">PARTNERS</p>
+    <div class="sponsors-tier sponsors-tier-principal">
+      {% for s in sponsor_mid %}
+      <a href="{{ s.website or '#' }}" {% if s.website %}target="_blank" rel="noopener"{% endif %} class="sponsor-logo-card" title="{{ s.name }}{% if s.category %} · {{ s.category }}{% endif %}">
+        {% if s.logo %}<img src="{{ s.logo|media_url }}" alt="{{ s.name }}" loading="lazy">{% else %}<span>{{ s.name }}</span>{% endif %}
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if sponsor_small %}
+    <p class="sponsor-tier-label">SUPPORTING PARTNERS</p>
+    <div class="sponsors-tier sponsors-tier-official">
+      {% for s in sponsor_small %}
+      <a href="{{ s.website or '#' }}" {% if s.website %}target="_blank" rel="noopener"{% endif %} class="sponsor-logo-card sponsor-sm" title="{{ s.name }}{% if s.category %} · {{ s.category }}{% endif %}">
+        {% if s.logo %}<img src="{{ s.logo|media_url }}" alt="{{ s.name }}" loading="lazy">{% else %}<span>{{ s.name }}</span>{% endif %}
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="coming-soon" style="padding:40px;">
+      <div class="icon">🤝</div>
+      <h2>Partners coming soon</h2>
+      <p>Upload Title Sponsor, Principal &amp; Official Partner logos from Admin → Sponsors.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+(function() {
+  const el = document.getElementById('countdown');
+  if (!el) return;
+  const target = new Date(el.dataset.date).getTime();
+  function tick() {
+    const now = Date.now();
+    let diff = Math.max(0, target - now);
+    const d = Math.floor(diff / 86400000); diff %= 86400000;
+    const h = Math.floor(diff / 3600000); diff %= 3600000;
+    const m = Math.floor(diff / 60000); diff %= 60000;
+    const s = Math.floor(diff / 1000);
+    document.getElementById('cd-days').textContent = String(d).padStart(2,'0');
+    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
+    document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+{% endblock %}

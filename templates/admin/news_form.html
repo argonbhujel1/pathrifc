@@ -1,0 +1,38 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}{% if item %}Edit{% else %}New{% endif %} News | Admin{% endblock %}
+{% block content %}
+<div class="container" style="max-width:700px;padding:40px 20px;">
+  <h2 style="color:var(--text);margin-bottom:16px;">{% if item %}Edit News{% else %}New News{% endif %}</h2>
+  <form method="POST" enctype="multipart/form-data" class="card" style="padding:24px;">
+    <div class="form-group"><label>Title *</label>
+      <input name="title" class="form-control" value="{{ item.title if item else '' }}" required>
+    </div>
+    <div class="form-group"><label>Category</label>
+      <input name="category" class="form-control" value="{{ item.category if item else 'Club News' }}">
+    </div>
+    <div class="form-group"><label>Excerpt</label>
+      <textarea name="excerpt" class="form-control" rows="2">{{ item.excerpt if item else '' }}</textarea>
+    </div>
+    <div class="form-group"><label>Content</label>
+      <textarea name="content" class="form-control" rows="8">{{ item.content if item else '' }}</textarea>
+    </div>
+    <div class="form-group"><label>Status</label>
+      <select name="status" class="form-control">
+        <option value="published" {% if item and item.status=='published' %}selected{% endif %}>Published</option>
+        <option value="draft" {% if item and item.status=='draft' %}selected{% endif %}>Draft</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Featured Image (file)</label>
+      <input type="file" name="featured_image" class="form-control" accept="image/png,image/jpeg,image/webp,image/gif">
+    </div>
+    <div class="form-group"><label>OR paste image URL</label>
+      <input type="url" name="image_url" class="form-control" placeholder="https://...">
+    </div>
+    {% if item and item.featured_image %}
+    <p><img src="{{ item.featured_image|media_url }}" style="max-height:140px;border-radius:8px;" alt=""></p>
+    {% endif %}
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{{ url_for('admin.news_list') }}" class="btn btn-outline">Back</a>
+  </form>
+</div>
+{% endblock %}

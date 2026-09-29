@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Admin | Pathari-11 FC{% endblock %}</title>
+  {% if club_logo %}
+  <link rel="icon" type="image/png" href="{{ club_logo|media_url }}">
+  <link rel="apple-touch-icon" href="{{ club_logo|media_url }}">
+  {% endif %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script>
+    (function(){ var t = localStorage.getItem('pathari-theme') || 'dark'; document.documentElement.setAttribute('data-theme', t); })();
+  </script>
+  <style>
+    body { min-height: 100vh; }
+    .admin-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 20px; border-bottom: 1px solid var(--glass-border);
+      background: rgba(3,7,18,0.9); backdrop-filter: blur(16px);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .admin-topbar .brand { font-family: var(--font-display); color: var(--neon); letter-spacing: 1px; font-weight: 700; }
+    .admin-topbar a { color: var(--text-muted); font-size: 0.85rem; margin-left: 16px; }
+    .admin-topbar a:hover { color: var(--neon); }
+    html[data-theme="light"] .admin-topbar { background: rgba(255,255,255,0.95); }
+
+    /* In-site delete modal */
+    .pathari-modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.65); backdrop-filter: blur(8px);
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .pathari-modal-overlay.open { display: flex; }
+    .pathari-modal {
+      width: 100%; max-width: 400px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 16px;
+      padding: 28px 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(0, 240, 255, 0.08);
+      text-align: center;
+    }
+    html[data-theme="light"] .pathari-modal {
+      background: rgba(255,255,255,0.98);
+      border-color: rgba(0,0,0,0.1);
+    }
+    .pathari-modal h3 {
+      font-family: var(--font-display), sans-serif;
+      color: var(--text, #fff);
+      font-size: 1.15rem;
+      margin: 0 0 10px;
+    }
+    .pathari-modal p {
+      color: var(--text-muted, #94a3b8);
+      font-size: 0.9rem;
+      margin: 0 0 22px;
+      line-height: 1.5;
+    }
+    .pathari-modal-actions {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+    }
+    .pathari-modal-actions .btn { min-width: 110px; }
+    .btn-danger-solid {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: #fff; border: none;
+      box-shadow: 0 0 16px rgba(220, 38, 38, 0.35);
+    }
+    .btn-danger-solid:hover { filter: brightness(1.1); }
+  </style>
+</head>
+<body>
+  <div class="admin-topbar">
+    <div>
+      <span class="brand">PATHARI-11 FC ADMIN</span>
+    </div>
+    <div>
+      <button type="button" class="btn btn-ghost theme-toggle" id="themeToggle" style="padding:6px 10px;" title="Theme">
+        <span class="theme-icon-dark">🌙</span><span class="theme-icon-light">☀️</span>
+      </button>
+      <a href="{{ url_for('main.index') }}" target="_blank">View Site</a>
+      <a href="{{ url_for('admin.security_2fa') }}">2FA</a>
+      <a href="{{ url_for('admin.logout') }}">Logout</a>
+    </div>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+
+  <!-- Site-styled delete confirmation -->
+  <div class="pathari-modal-overlay" id="deleteModal" role="dialog" aria-modal="true">
+    <div class="pathari-modal">
+      <h3 id="deleteModalTitle">Delete item?</h3>
+      <p id="deleteModalMsg">This action cannot be undone.</p>
+      <div class="pathari-modal-actions">
+        <button type="button" class="btn btn-outline" id="deleteModalCancel">Cancel</button>
+        <button type="button" class="btn btn-danger-solid" id="deleteModalConfirm">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function(){
+    var themeBtn = document.getElementById('themeToggle');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', function(){
+        var cur = document.documentElement.getAttribute('data-theme') || 'dark';
+        var next = cur === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('pathari-theme', next);
+      });
+    }
+    setTimeout(function(){
+      document.querySelectorAll('.alert').forEach(function(a){
+        a.style.opacity='0'; a.style.transition='opacity .4s';
+        setTimeout(function(){ a.remove(); }, 400);
+      });
+    }, 4000);
+
+    // In-site delete modal
+    var overlay = document.getElementById('deleteModal');
+    var titleEl = document.getElementById('deleteModalTitle');
+    var msgEl = document.getElementById('deleteModalMsg');
+    var cancelBtn = document.getElementById('deleteModalCancel');
+    var confirmBtn = document.getElementById('deleteModalConfirm');
+    var pendingForm = null;
+
+    window.pathariConfirmDelete = function(form, title, message) {
+      pendingForm = form;
+      if (titleEl) titleEl.textContent = title || 'Delete item?';
+      if (msgEl) msgEl.textContent = message || 'This action cannot be undone.';
+      if (overlay) overlay.classList.add('open');
+      return false;
+    };
+
+    function closeModal() {
+      if (overlay) overlay.classList.remove('open');
+      pendingForm = null;
+    }
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    if (overlay) {
+      overlay.addEventListener('click', function(e){
+        if (e.target === overlay) closeModal();
+      });
+    }
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', function(){
+        if (pendingForm) {
+          var f = pendingForm;
+          pendingForm = null;
+          if (overlay) overlay.classList.remove('open');
+          f.submit();
+        }
+      });
+    }
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && overlay && overlay.classList.contains('open')) closeModal();
+    });
+  });
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

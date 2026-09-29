@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}{{ person.name }} | Leadership | Pathari-11 FC{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1>{{ person.name }}</h1>
+    <p>{{ person.position }}{% if person.section %} · {{ person.section }}{% endif %}</p>
+  </div>
+</div>
+<section class="section">
+  <div class="container">
+    <div class="player-profile-card {% if person.section == 'Technical Team' %}tech-glow{% endif %}">
+      <div class="pp-photo">
+        {% if person.photo %}
+        <img src="{{ person.photo|media_url }}" alt="{{ person.name }}">
+        {% else %}
+        <div class="pp-ph">{% if person.section == 'Technical Team' %}💻{% else %}👤{% endif %}</div>
+        {% endif %}
+      </div>
+      {% if person.section %}
+      <div class="pp-number" style="font-size:0.85rem;letter-spacing:2px;">{{ person.section|upper }}</div>
+      {% endif %}
+      <div class="pp-grid">
+        <div class="pp-item"><span>Name</span><strong>{{ person.name }}</strong></div>
+        <div class="pp-item"><span>Position / Role</span><strong>{{ person.position }}</strong></div>
+        <div class="pp-item"><span>Section</span><strong>{{ person.section or '—' }}</strong></div>
+        <div class="pp-item"><span>Status</span><strong>{% if person.is_published %}Active{% else %}Draft{% endif %}</strong></div>
+      </div>
+      {% if person.bio %}
+      <div class="pp-career">
+        <span>About</span>
+        <p>{{ person.bio }}</p>
+      </div>
+      {% endif %}
+      <a href="{{ url_for('main.leadership', section=person.section or 'All') }}" class="btn btn-outline mt-3">← Back to Leadership</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} | Pathari-11 FC Store{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>{{ product.name }}</h1></div></div>
+<section class="section"><div class="container">
+  <div class="grid-2" style="align-items:start;">
+    <div>
+      <div class="card" style="height:360px;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:0;margin-bottom:12px;">
+        {% if product.image %}
+        <img src="{{ product.image|media_url }}" alt="{{ product.name }} front" style="width:100%;height:100%;object-fit:cover;" id="prodMainImg">
+        {% else %}
+        <span style="font-size:6rem;">👕</span>
+        {% endif %}
+      </div>
+      {% if product.image_back %}
+      <div style="display:flex;gap:8px;">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('prodMainImg').src='{{ product.image|media_url }}'">Front</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('prodMainImg').src='{{ product.image_back|media_url }}'">Back</button>
+      </div>
+      {% endif %}
+    </div>
+    <div>
+      {% if product.is_limited_offer %}<span class="badge badge-demo" style="margin-bottom:8px;">LIMITED OFFER</span>{% endif %}
+      <div class="price" style="font-size:1.8rem;font-weight:800;color:var(--neon);margin-bottom:12px;">
+        Rs. {{ "{:,.0f}".format(product.price) }}
+        {% if product.compare_price and product.compare_price > product.price %}
+        <small style="text-decoration:line-through;color:var(--text-muted);font-size:1rem;margin-left:8px;">Rs. {{ "{:,.0f}".format(product.compare_price) }}</small>
+        {% endif %}
+      </div>
+      <p style="color:var(--text-muted);margin-bottom:20px;">{{ product.description }}</p>
+      <form method="POST" action="{{ url_for('shop.cart_add') }}">
+        <input type="hidden" name="product_id" value="{{ product.id }}">
+        <div class="form-group">
+          <label>Size</label>
+          <select name="size" class="form-control" style="max-width:160px;">
+            {% for v in variants %}<option value="{{ v.size }}">{{ v.size }} {% if v.stock < 5 %}(Low stock){% endif %}</option>
+            {% else %}
+            <option>S</option><option>M</option><option>L</option><option>XL</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Quantity</label>
+          <input type="number" name="quantity" value="1" min="1" max="10" class="form-control" style="max-width:100px;">
+        </div>
+        <button type="submit" class="btn btn-primary">Add to Cart</button>
+        <a href="{{ url_for('shop.cart') }}" class="btn btn-outline" style="margin-left:8px;">View Cart</a>
+      </form>
+    </div>
+  </div>
+</div></section>
+{% endblock %}

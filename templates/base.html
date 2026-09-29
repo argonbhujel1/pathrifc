@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Pathari-11 FC | Official Football Club{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Official website of Pathari-11 FC – The Pride of Pathari. One Club. One Pride. Fixtures, news, shop, membership and more.{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}Pathari-11 FC | Official Football Club{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}The Pride of Pathari. One Club. One Pride.{% endblock %}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ request.url }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="{{ request.url }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% if club_logo %}
+  <link rel="icon" type="image/png" href="{{ club_logo|media_url }}">
+  <link rel="apple-touch-icon" href="{{ club_logo|media_url }}">
+  {% endif %}
+  <script>
+    (function(){
+      var themes = ['dark', 'gold'];
+      var t = localStorage.getItem('pathari-theme') || 'dark';
+      if (t !== 'dark' && t !== 'gold') t = 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+      setInterval(function(){
+        var cur = document.documentElement.getAttribute('data-theme') || 'dark';
+        var next = cur === 'dark' ? 'gold' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('pathari-theme', next); } catch(e) {}
+      }, 10000);
+    })();
+  </script>
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="{% if request.endpoint == 'main.index' %}page-home{% endif %}">
+  <!-- Preloader: first visit only -->
+  <div id="sitePreloader" class="site-preloader" aria-hidden="true" style="display:none;" {% if loading_bg %}data-bg="{{ loading_bg|media_url }}"{% endif %}>
+    <div class="gate gate-left"></div>
+    <div class="gate gate-right"></div>
+    <div class="preloader-bg-img" id="preloaderBgImg"></div>
+    <div class="preloader-inner">
+      <div class="elephant-march">
+        {% if club_logo %}
+        <img src="{{ club_logo|media_url }}" alt="Pathari-11 FC" class="preload-logo">
+        {% else %}
+        <span class="elephant">⚽</span>
+        {% endif %}
+      </div>
+      <p class="pre-line-1" id="preLine1">PATHARI-11 RISING</p>
+      <p class="pre-line-2" id="preLine2">LET'S ROCK PATHRI</p>
+      {% if session.get('member_name') %}
+      <p class="pre-line-member" id="preMember" data-name="{{ session.get('member_name') }}">WELCOME · {{ session.get('member_name')|upper }}</p>
+      {% endif %}
+      <div class="pre-bar"><div class="pre-bar-fill"></div></div>
+    </div>
+  </div>
+  <!-- Sticky Navigation -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="{{ url_for('main.index') }}" class="logo">
+        {% if club_logo %}
+        <img src="{{ club_logo|media_url }}" alt="Pathari-11 FC" class="logo-img">
+        {% else %}
+        <div class="logo-mark">⚽</div>
+        {% endif %}
+        <span class="logo-text">PATHARI-11 FC</span>
+      </a>
+      <button class="mobile-toggle" id="navToggle" aria-label="Menu">☰</button>
+      <div class="nav-links" id="navLinks">
+        <a href="{{ url_for('main.index') }}" class="{% if request.endpoint == 'main.index' %}active{% endif %}">Home</a>
+        <a href="{{ url_for('main.club') }}">Club</a>
+        <a href="{{ url_for('main.leadership') }}">Leadership</a>
+        <a href="{{ url_for('main.squad') }}">Our Squad</a>
+        <a href="{{ url_for('main.matches') }}">Matches</a>
+        <a href="{{ url_for('main.news') }}">News</a>
+        <a href="{{ url_for('main.gallery') }}">Gallery</a>
+        <a href="{{ url_for('shop.shop') }}">Shop</a>
+        {% if not session.get('membership_number') %}<a href="{{ url_for('main.membership') }}">Membership</a>{% endif %}
+        <a href="{{ url_for('main.fans_frame') }}">Fans Frame</a>
+        <a href="{{ url_for('main.contact') }}">Contact</a>
+      </div>
+      <div class="nav-actions">
+        <a href="{{ url_for('shop.cart') }}" class="btn btn-ghost cart-badge" title="Cart">
+          🛒
+          {% if cart_count > 0 %}<span class="count">{{ cart_count }}</span>{% endif %}
+        </a>
+        {% if session.get('membership_number') %}
+        <a href="{{ url_for('main.membership_card', number=session.get('membership_number')) }}" class="btn btn-outline" style="padding:8px 14px;font-size:0.8rem;">My Membership</a>
+        {% else %}
+        <a href="{{ url_for('main.membership') }}" class="btn btn-primary" style="padding:8px 14px;font-size:0.8rem;">Join Now</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- BAM Studio tech partner only on homepage (overridden in index.html) -->
+  {% block tech_partner %}{% endblock %}
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="{{ url_for('main.index') }}" class="logo" style="margin-bottom:14px;">
+            {% if club_logo %}<img src="{{ club_logo|media_url }}" alt="" class="logo-img" style="width:36px;height:36px;">{% else %}<div class="logo-mark">⚽</div>{% endif %}
+            <span>PATHARI-11 FC</span>
+          </a>
+          <p class="text-muted" style="font-size:0.85rem;max-width:260px;">
+            The Pride of Pathari. One Club. One Pride.<br>
+            Pride of Pathari.
+          </p>
+        </div>
+        <div>
+          <h4>Quick Links</h4>
+          <a href="{{ url_for('main.club') }}">Club</a>
+          <a href="{{ url_for('main.matches') }}">Matches</a>
+          <a href="{{ url_for('main.news') }}">News</a>
+          <a href="{{ url_for('shop.shop') }}">Shop</a>
+          {% if not session.get('membership_number') %}<a href="{{ url_for('main.membership') }}">Membership</a>{% endif %}
+        <a href="{{ url_for('main.fans_frame') }}">Fans Frame</a>
+        </div>
+        <div>
+          <h4>Support</h4>
+          <a href="{{ url_for('main.contact') }}">Contact</a>
+          <a href="{{ url_for('main.privacy') }}">Privacy Policy</a>
+          <a href="{{ url_for('main.terms') }}">Terms &amp; Conditions</a>
+          <a href="{{ url_for('main.shipping') }}">Shipping Policy</a>
+          <a href="{{ url_for('main.returns') }}">Return Policy</a>
+          <a href="#">Return Policy</a>
+        </div>
+        <div>
+          <h4>Connect</h4>
+          <a href="#">Facebook</a>
+          <a href="#">Instagram</a>
+          <a href="#">X / Twitter</a>
+          <a href="#">YouTube</a>
+          <p class="text-muted" style="font-size:0.8rem;margin-top:12px;">
+            [Official social links coming soon]
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© {{ 2026 }} Pathari-11 FC. All rights reserved.</span>
+        <span class="footer-credit">
+          Website designed &amp; developed by
+          <a href="https://argan.com.np/" target="_blank" rel="noopener">BAM Studio</a>
+          — WEB &amp; TECHNOLOGY PARTNER
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- AI Fan Chatbot -->
+  <button class="chatbot-toggle" id="chatToggle" title="Pathari Bot">
+    {% if club_logo %}<img src="{{ club_logo|media_url }}" alt="Pathari" class="chat-logo-btn">{% else %}💬{% endif %}
+  </button>
+  <div class="chatbot-panel" id="chatPanel">
+    <div class="chat-header">
+      {% if club_logo %}<img src="{{ club_logo|media_url }}" alt="" class="chat-avatar-img">{% else %}<div class="avatar">I$H</div>{% endif %}
+      <div>
+        <h4>PATHARI-11LI · I$H</h4>
+        <small>Official fan assistant · Let's Rock Pathri</small>
+      </div>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg bot">Namaste! I am <strong>Pathari Bot</strong> — Pathari-11 FC official AI assistant. Ask about matches, squad, shop or membership. Let's Rock Pathri!</div>
+    </div>
+    <div class="chat-quick" id="chatQuick">
+      <button data-msg="Next Match">NEXT MATCH</button>
+      <button data-msg="Fixtures">FIXTURES</button>
+      <button data-msg="Results">RESULTS</button>
+      <button data-msg="Shop">SHOP</button>
+      <button data-msg="Membership">MEMBERSHIP</button>
+      <button data-msg="Contact">CONTACT</button>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="chatInput" placeholder="Type a message..." autocomplete="off">
+      <button id="chatSend">Send</button>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block extra_js %}{% endblock %}
+<script>
+(function(){
+  var pre = document.getElementById('sitePreloader');
+  if (!pre) return;
+  // Member: always show welcome once after join
+  var memberEl = document.getElementById('preMember');
+  var forceWelcome = false;
+  try {
+    if (memberEl && sessionStorage.getItem('pathari_member_welcome') !== '1') {
+      forceWelcome = true;
+    }
+    if (!forceWelcome && sessionStorage.getItem('pathari_loaded') === '1') {
+      pre.remove();
+      return;
+    }
+  } catch(e) {}
+  pre.style.display = 'flex';
+  if (memberEl) {
+    var n = memberEl.getAttribute('data-name') || '';
+    var l1 = document.getElementById('preLine1');
+    var l2 = document.getElementById('preLine2');
+    if (l1) l1.textContent = 'WELCOME · ' + (n ? n.toUpperCase() : 'MEMBER');
+    if (l2) l2.textContent = "LET'S ROCK PATHRI";
+    try { sessionStorage.setItem('pathari_member_welcome', '1'); } catch(e) {}
+  }
+  // Show uploaded loading image fully (any ratio)
+  var bg = pre.getAttribute('data-bg');
+  var bgEl = document.getElementById('preloaderBgImg');
+  if (bg && bgEl) {
+    bgEl.style.backgroundImage = 'url(' + bg + ')';
+    bgEl.classList.add('has-img');
+  }
+  var done = false;
+  function hide(){
+    if (done) return; done = true;
+    try { sessionStorage.setItem('pathari_loaded', '1'); } catch(e) {}
+    pre.classList.add('gates-open');
+    setTimeout(function(){ pre.classList.add('hide'); }, 900);
+    setTimeout(function(){ if (pre.parentNode) pre.remove(); }, 1600);
+  }
+  var t0 = Date.now();
+  function tryHide(){
+    var wait = Math.max(0, 2500 - (Date.now() - t0));
+    setTimeout(hide, wait);
+  }
+  if (document.readyState === 'complete') tryHide();
+  else window.addEventListener('load', tryHide);
+  setTimeout(hide, 6000);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Contact | Pathari-11 FC{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>Get In Touch</h1><p>We'd love to hear from you</p></div></div>
+<section class="section"><div class="container">
+  <div class="grid-2" style="align-items:start;">
+    <form method="POST" class="card" style="padding:28px;">
+      <div class="form-group"><label>Name *</label><input type="text" name="name" class="form-control" required></div>
+      <div class="form-group"><label>Email *</label><input type="email" name="email" class="form-control" required></div>
+      <div class="form-group"><label>Phone</label><input type="tel" name="phone" class="form-control"></div>
+      <div class="form-group"><label>Subject</label><input type="text" name="subject" class="form-control"></div>
+      <div class="form-group"><label>Message *</label><textarea name="message" class="form-control" rows="5" required></textarea></div>
+      <button type="submit" class="btn btn-primary">Send Message</button>
+    </form>
+    <div>
+      <div class="card" style="padding:24px;margin-bottom:16px;">
+        <h3 style="color:var(--text);margin-bottom:12px;">Contact Info</h3>
+        <p class="text-muted"><strong>Email:</strong>
+          {% if contact_email %}<a href="mailto:{{ contact_email }}">{{ contact_email }}</a>{% else %}Official email coming soon{% endif %}
+        </p>
+        <p class="text-muted"><strong>Phone:</strong>
+          {% if contact_phone %}<a href="tel:{{ contact_phone }}">{{ contact_phone }}</a>{% else %}Official phone coming soon{% endif %}
+        </p>
+        <p class="text-muted"><strong>Address:</strong>
+          {{ contact_address or 'Pathari, Nepal' }}
+        </p>
+      </div>
+      <div class="card" style="padding:24px;">
+        <h3 style="color:var(--text);margin-bottom:12px;">Social</h3>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          {% if social_facebook %}<a href="{{ social_facebook }}" target="_blank" rel="noopener">Facebook</a>{% endif %}
+          {% if social_instagram %}<a href="{{ social_instagram }}" target="_blank" rel="noopener">Instagram</a>{% endif %}
+          {% if social_twitter %}<a href="{{ social_twitter }}" target="_blank" rel="noopener">X / Twitter</a>{% endif %}
+          {% if social_youtube %}<a href="{{ social_youtube }}" target="_blank" rel="noopener">YouTube</a>{% endif %}
+          {% if not social_facebook and not social_instagram and not social_twitter and not social_youtube %}
+          <p class="text-muted">Add social links from Admin → Settings.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div></section>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ player.name or 'Player' }} | Pathari-11 FC{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1>{{ player.name or 'Player Profile' }}</h1>
+    <p>{% if player.number %}#{{ player.number }} · {% endif %}{{ player.position or 'Pathari-11 FC' }}</p>
+  </div>
+</div>
+<section class="section">
+  <div class="container">
+    <div class="player-profile-card">
+      <div class="pp-photo">
+        {% if player.photo %}
+        <img src="{{ player.photo|media_url }}" alt="{{ player.name }}">
+        {% else %}
+        <div class="pp-ph">⚽</div>
+        {% endif %}
+      </div>
+      {% if player.number %}<div class="pp-number">#{{ player.number }}</div>{% endif %}
+      <div class="pp-grid">
+        <div class="pp-item"><span>Position</span><strong>{{ player.position or '—' }}</strong></div>
+        <div class="pp-item"><span>Nationality</span><strong>{{ player.nationality or '—' }}</strong></div>
+        <div class="pp-item"><span>Date of Birth</span><strong>{{ player.date_of_birth.strftime('%d %b %Y') if player.date_of_birth else '—' }}</strong></div>
+        <div class="pp-item"><span>Height</span><strong>{{ player.height or '—' }}</strong></div>
+        <div class="pp-item"><span>Preferred Foot</span><strong>{{ player.preferred_foot or '—' }}</strong></div>
+        <div class="pp-item"><span>Appearances</span><strong>{{ player.appearances or 0 }}</strong></div>
+        <div class="pp-item"><span>Goals</span><strong>{{ player.goals or 0 }}</strong></div>
+        <div class="pp-item"><span>Assists</span><strong>{{ player.assists or 0 }}</strong></div>
+      </div>
+      {% if player.career %}
+      <div class="pp-career"><span>Career / Notes</span><p>{{ player.career }}</p></div>
+      {% endif %}
+      <a href="{{ url_for('main.squad') }}" class="btn btn-outline mt-3">← Back to Squad</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Checkout | Pathari-11 FC{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>Checkout</h1></div></div>
+<section class="section"><div class="container">
+  <form method="POST" class="grid-2" style="align-items:start;gap:28px;">
+    <div>
+      <h3 style="color:#fff;margin-bottom:16px;">Customer Details</h3>
+      <div class="form-group"><label>Full Name *</label>
+        <input type="text" name="name" class="form-control" required autocomplete="name">
+      </div>
+      <div class="form-group"><label>Phone *</label>
+        <input type="tel" name="phone" class="form-control" required autocomplete="tel">
+      </div>
+      <div class="form-group"><label>Email</label>
+        <input type="email" name="email" class="form-control" autocomplete="email">
+      </div>
+      <div class="form-group"><label>Address *</label>
+        <textarea name="address" class="form-control" rows="3" required></textarea>
+      </div>
+      <div class="form-group"><label>City</label>
+        <input type="text" name="city" class="form-control">
+      </div>
+      <div class="form-group"><label>Notes</label>
+        <textarea name="notes" class="form-control" rows="2" placeholder="Landmark, delivery notes…"></textarea>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="padding:24px;">
+        <h3 style="color:#fff;margin-bottom:14px;">Order Summary</h3>
+        {% for item in items %}
+        <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;font-size:0.9rem;">
+          <span>
+            {{ item.product.name if item.product else 'Item' }} × {{ item.quantity }}
+            {% if item.is_custom %}
+            <br><small class="text-muted">Custom: {{ item.custom_name }} #{{ item.custom_number }}{% if item.size %} · {{ item.size }}{% endif %}</small>
+            {% endif %}
+          </span>
+          <span>Rs. {{ "{:,.0f}".format(item.product.price * item.quantity) if item.product else 0 }}</span>
+        </div>
+        {% endfor %}
+        <hr style="border-color:var(--glass-border);margin:14px 0;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span class="text-muted">Subtotal</span><span>Rs. {{ "{:,.0f}".format(subtotal) }}</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span class="text-muted">Delivery</span><span>{% if delivery == 0 %}FREE{% else %}Rs. {{ "{:,.0f}".format(delivery) }}{% endif %}</span></div>
+        <div style="display:flex;justify-content:space-between;font-weight:800;font-size:1.15rem;"><span>Total</span><span style="color:var(--neon);">Rs. {{ "{:,.0f}".format(total) }}</span></div>
+        <button type="submit" class="btn btn-primary" style="width:100%;margin-top:20px;">Place Order</button>
+        <a href="{{ url_for('shop.cart') }}" class="btn btn-outline" style="width:100%;margin-top:10px;text-align:center;">Back to Cart</a>
+      </div>
+    </div>
+  </form>
+</div></section>
+{% endblock %}

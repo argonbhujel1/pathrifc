@@ -1,0 +1,66 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Order {{ order.order_number }} | Admin{% endblock %}
+{% block content %}
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div style="padding:0 20px 16px;"><strong style="color:var(--text);">PATHARI-11 FC Admin</strong></div>
+    <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('admin.orders_list') }}">Orders</a>
+    <a href="{{ url_for('admin.products_list') }}">Products</a>
+    <a href="{{ url_for('admin.members_list') }}">Members</a>
+    <a href="{{ url_for('admin.logout') }}">Logout</a>
+  </aside>
+  <div class="admin-main">
+    <div class="admin-header-bar"><h1>Order {{ order.order_number }}</h1></div>
+    <div class="card" style="padding:20px;margin-bottom:16px;">
+      <p><strong>Customer:</strong> {{ order.customer_name }}</p>
+      <p><strong>Phone:</strong> {{ order.customer_phone }}</p>
+      <p><strong>Email:</strong> {{ order.customer_email or '—' }}</p>
+      <p><strong>Address:</strong> {{ order.address }}{% if order.city %}, {{ order.city }}{% endif %}</p>
+      <p><strong>Status:</strong> {{ order.status }} · <strong>Total:</strong> Rs. {{ "{:,.0f}".format(order.total) }}</p>
+      {% if order.notes %}<p><strong>Notes:</strong> {{ order.notes }}</p>{% endif %}
+    </div>
+    <form method="POST" action="{{ url_for('admin.order_status', id=order.id) }}" style="margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+      <select name="status" class="form-control" style="max-width:200px;">
+        {% for s in ['Pending', 'Confirmed', 'Processing', 'Shipped', 'Delivered', 'Cancelled'] %}
+        <option value="{{ s }}" {% if order.status == s or (order.status or '')|lower == s|lower %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn btn-primary">Update Status</button>
+    </form>
+    <h3 style="color:var(--text);margin-bottom:12px;">Items</h3>
+    {% for i in order.items %}
+    <div class="card" style="padding:16px;margin-bottom:12px;">
+      <p style="font-weight:700;color:var(--text);">{{ i.product_name }} × {{ i.quantity }}</p>
+      <p>Unit: Rs. {{ i.unit_price }} · Line: Rs. {{ "{:,.0f}".format((i.unit_price or 0) * (i.quantity or 1)) }}</p>
+      {% if i.is_custom %}
+      {% set jimg = i._jersey_img if i._jersey_img is defined else '' %}
+      {% set kit = i._kit if i._kit is defined else 'home' %}
+      <div style="margin-top:12px;padding:16px;border-radius:12px;border:1px solid var(--glass-border);background:rgba(0,0,0,0.25);">
+        <p style="color:var(--neon);font-weight:700;margin-bottom:8px;">Custom Jersey Order</p>
+        <p><strong>Kit / Size:</strong> {{ i.size or '—' }}</p>
+        <p><strong>Name on back:</strong> {{ i.custom_name or '—' }}</p>
+        <p><strong>Number on back:</strong> {{ i.custom_number or '—' }}</p>
+        <div class="admin-jersey-preview" style="margin-top:14px;max-width:220px;position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--glass-border);aspect-ratio:3/4;background:#0a4a7a;">
+          {% if jimg %}
+          <img src="{{ jimg|media_url }}" alt="Jersey" style="width:100%;height:100%;object-fit:cover;display:block;">
+          {% else %}
+          <div style="width:100%;height:100%;background:linear-gradient(165deg,#0a4a7a,#063a5c);"></div>
+          {% endif %}
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;pointer-events:none;">
+            <div style="margin-top:22%;font-family:var(--font-display),Impact,sans-serif;font-weight:900;font-size:clamp(0.7rem,2.5vw,0.95rem);letter-spacing:0.2em;color:#fff;text-transform:uppercase;text-shadow:0 2px 4px rgba(0,0,0,0.6);-webkit-text-stroke:1px rgba(0,0,0,0.4);">{{ (i.custom_name or 'NAME')|upper }}</div>
+            <div style="margin-top:2%;font-family:var(--font-display),Impact,sans-serif;font-weight:900;font-size:clamp(2.8rem,12vw,4.2rem);line-height:0.9;color:#fff;letter-spacing:0.08em;text-shadow:0 3px 0 rgba(0,0,0,0.45);-webkit-text-stroke:2px rgba(0,0,0,0.35);">{{ i.custom_number or '00' }}</div>
+            <div style="margin-top:auto;margin-bottom:12%;font-size:0.55rem;letter-spacing:0.25em;font-weight:800;color:#fde047;">BAM STUDIO</div>
+          </div>
+        </div>
+        <p class="text-muted" style="font-size:0.75rem;margin-top:8px;">Preview uses official store {{ kit|capitalize }} kit back photo</p>
+      </div>
+      {% else %}
+      <p class="text-muted">Size: {{ i.size or '—' }}</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+    <a href="{{ url_for('admin.orders_list') }}" class="btn btn-outline">← Orders</a>
+  </div>
+</div>
+{% endblock %}

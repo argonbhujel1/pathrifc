@@ -1,0 +1,46 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Message | Admin{% endblock %}
+{% block content %}
+<div class="container" style="max-width:700px;padding:40px 20px;">
+  <h2 style="color:var(--text);">Message from {{ msg.name }}</h2>
+  <div class="card" style="padding:24px;margin-top:16px;">
+    <p><strong>Email:</strong> {{ msg.email }}</p>
+    <p><strong>Phone:</strong> {{ msg.phone or '—' }}</p>
+    <p><strong>Subject:</strong> {{ msg.subject or '—' }}</p>
+    <p><strong>Date:</strong> {{ msg.created_at.strftime('%d %b %Y %H:%M') if msg.created_at else '—' }}</p>
+    <p><strong>Status:</strong> {{ 'Read' if msg.is_read else 'Unread' }}</p>
+    <hr style="border-color:var(--glass-border);margin:16px 0;">
+    <p style="white-space:pre-wrap;color:var(--text);">{{ msg.message }}</p>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">
+      {% if not msg.is_read %}
+      <form method="POST" action="{{ url_for('admin.message_read', id=msg.id) }}">
+        <button type="submit" class="btn btn-primary">Mark as Read</button>
+      </form>
+      {% else %}
+      <form method="POST" action="{{ url_for('admin.message_unread', id=msg.id) }}">
+        <button type="submit" class="btn btn-outline">Mark as Unread</button>
+      </form>
+      {% endif %}
+      <form method="POST" action="{{ url_for('admin.message_delete', id=msg.id) }}" onsubmit="return pathariConfirmDelete(this, 'Delete this message?', 'This message will be permanently removed.');">
+        <button type="submit" class="btn btn-ghost" style="color:var(--danger);">Delete</button>
+      </form>
+    </div>
+
+    <h3 style="color:var(--neon);margin:28px 0 12px;font-size:0.95rem;">Reply</h3>
+    {% if msg.admin_reply %}
+    <div class="card" style="padding:14px;margin-bottom:12px;background:rgba(0,240,255,0.06);">
+      <small class="text-muted">Saved reply{% if msg.replied_at %} · {{ msg.replied_at.strftime('%d %b %Y') }}{% endif %}</small>
+      <p style="margin-top:6px;color:var(--text);white-space:pre-wrap;">{{ msg.admin_reply }}</p>
+    </div>
+    {% endif %}
+    <form method="POST" action="{{ url_for('admin.message_reply', id=msg.id) }}">
+      <div class="form-group">
+        <textarea name="admin_reply" class="form-control" rows="4" placeholder="Type admin reply / note...">{{ msg.admin_reply or '' }}</textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Save Reply</button>
+    </form>
+    <a href="{{ url_for('admin.messages_list') }}" class="btn btn-outline mt-3">← All Messages</a>
+  </div>
+</div>
+{% endblock %}

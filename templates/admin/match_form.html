@@ -1,0 +1,48 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}{% if item %}Edit{% else %}New{% endif %} Match | Admin{% endblock %}
+{% block content %}
+<div class="container" style="max-width:640px;padding:40px 20px;">
+  <h2 style="color:var(--text);margin-bottom:16px;">{% if item %}Edit Match{% else %}New Match{% endif %}</h2>
+  <form method="POST" enctype="multipart/form-data" class="card" style="padding:24px;">
+    <div class="form-group"><label>Opponent *</label>
+      <input name="opponent" class="form-control" value="{{ item.opponent if item else '' }}" required>
+    </div>
+    <div class="form-group"><label>Opponent Logo (file)</label>
+      <input type="file" name="opponent_logo" class="form-control" accept="image/*">
+    </div>
+    <div class="form-group"><label>OR opponent logo URL</label>
+      <input type="url" name="opponent_logo_url" class="form-control" placeholder="https://...">
+    </div>
+    {% if item and item.opponent_logo %}
+    <p><img src="{{ item.opponent_logo|media_url }}" style="height:48px;background:#fff;padding:4px;border-radius:6px;" alt=""></p>
+    {% endif %}
+    <div class="form-group"><label>Competition</label>
+      <input name="competition" class="form-control" value="{{ item.competition if item else 'Nepal Super League' }}">
+    </div>
+    <div class="form-group"><label>Venue</label>
+      <input name="venue" class="form-control" value="{{ item.venue if item else '' }}">
+    </div>
+    <div class="form-group"><label>Date & Time</label>
+      <input type="datetime-local" name="match_date" class="form-control"
+        value="{{ item.match_date.strftime('%Y-%m-%dT%H:%M') if item and item.match_date else '' }}">
+    </div>
+    <div class="form-group"><label><input type="checkbox" name="is_home" {% if not item or item.is_home %}checked{% endif %}> Home Match</label></div>
+    <div class="form-group"><label>Status</label>
+      <select name="status" class="form-control">
+        {% for s in ['upcoming','finished','live'] %}
+        <option value="{{ s }}" {% if item and item.status==s %}selected{% endif %}>{{ s|capitalize }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group"><label>Home Score</label>
+      <input type="number" name="home_score" class="form-control" value="{{ item.home_score if item and item.home_score is not none else '' }}">
+    </div>
+    <div class="form-group"><label>Away Score</label>
+      <input type="number" name="away_score" class="form-control" value="{{ item.away_score if item and item.away_score is not none else '' }}">
+    </div>
+    <div class="form-group"><label><input type="checkbox" name="is_published" {% if not item or item.is_published %}checked{% endif %}> Published</label></div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{{ url_for('admin.matches_list') }}" class="btn btn-outline">Back</a>
+  </form>
+</div>
+{% endblock %}

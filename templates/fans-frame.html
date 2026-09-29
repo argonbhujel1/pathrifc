@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% block title %}Fans Frame | Pathari-11 FC{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1>PATHARI-11 FC — FANS FRAME</h1>
+    <p>CREATE YOUR OFFICIAL FAN FRAME · LET'S ROCK PATHRI · PATHARI-11 RISING</p>
+  </div>
+</div>
+<section class="section">
+  <div class="container">
+    <div class="frame-builder">
+      <div class="frame-controls">
+        <h3 class="frame-step">1. UPLOAD YOUR PHOTO</h3>
+        <div class="frame-upload" id="uploadZone">
+          <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" hidden>
+          <div class="frame-upload-inner" id="uploadInner">
+            <div class="frame-upload-icon">📷</div>
+            <p>Click to upload photo</p>
+            <small class="text-muted">JPG, PNG · Max 5MB</small>
+          </div>
+        </div>
+
+        <h3 class="frame-step">2. CHOOSE FRAME STYLE</h3>
+        <div class="frame-styles" id="frameStyles">
+          <button type="button" class="frame-style active" data-style="classic">
+            <span>⚡</span> CLASSIC
+          </button>
+          <button type="button" class="frame-style" data-style="neon">
+            <span>💎</span> NEON BLUE
+          </button>
+          <button type="button" class="frame-style" data-style="champion">
+            <span>🏆</span> CHAMPION
+          </button>
+          <button type="button" class="frame-style" data-style="elephant">
+            <span>🐘</span> ELEPHANT
+          </button>
+        </div>
+
+        <h3 class="frame-step">3. YOUR NAME</h3>
+        <input type="text" id="fanName" class="form-control" placeholder="Enter your name..." maxlength="24">
+
+        <button type="button" class="btn btn-primary" id="downloadBtn" style="width:100%;margin-top:20px;padding:14px;">
+          ⬇ DOWNLOAD FRAME
+        </button>
+      </div>
+
+      <div class="frame-preview-wrap">
+        <p class="text-muted" style="text-align:center;margin-bottom:12px;letter-spacing:2px;font-size:0.75rem;">PREVIEW</p>
+        <canvas id="frameCanvas" width="400" height="520"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function(){
+  const canvas = document.getElementById('frameCanvas');
+  const ctx = canvas.getContext('2d');
+  const photoInput = document.getElementById('photoInput');
+  const uploadZone = document.getElementById('uploadZone');
+  const fanName = document.getElementById('fanName');
+  const downloadBtn = document.getElementById('downloadBtn');
+  let photo = null;
+  let style = 'classic';
+
+  const styles = {
+    classic: { border: '#00f0ff', accent: '#00f0ff', header: ['#0a2540','#1e3a5f'], tagline: 'PATHARI-11 RISING' },
+    neon: { border: '#00f0ff', accent: '#ff2bd6', header: ['#030712','#0a1a3a'], tagline: 'PATHARI-11 RISING' },
+    champion: { border: '#ffcc00', accent: '#ffcc00', header: ['#1a1200','#3d2e00'], tagline: 'PRIDE OF PATHARI-11' },
+    elephant: { border: '#60a5fa', accent: '#3b82f6', header: ['#0f2744','#1e3a5f'], tagline: "LET'S ROCK PATHRI" }
+  };
+
+  function draw() {
+    const W = canvas.width, H = canvas.height;
+    const s = styles[style];
+    ctx.clearRect(0, 0, W, H);
+
+    // Background
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#030712');
+    bg.addColorStop(1, '#0a0f1e');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Outer neon border
+    ctx.strokeStyle = s.border;
+    ctx.lineWidth = 4;
+    ctx.shadowColor = s.border;
+    ctx.shadowBlur = 18;
+    roundRect(ctx, 8, 8, W-16, H-16, 16);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Header bar
+    const hg = ctx.createLinearGradient(0, 0, W, 0);
+    hg.addColorStop(0, s.header[0]);
+    hg.addColorStop(1, s.header[1]);
+    ctx.fillStyle = hg;
+    roundRect(ctx, 16, 16, W-32, 70, 10, true);
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 22px Orbitron, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('⚡ PATHARI-11 FC', W/2, 48);
+    ctx.font = '11px Inter, sans-serif';
+    ctx.fillStyle = s.accent;
+    ctx.fillText("OFFICIAL FAN · LET'S ROCK PATHRI", W/2, 70);
+
+    // Photo circle
+    const cx = W/2, cy = 220, r = 90;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI*2);
+    ctx.closePath();
+    ctx.clip();
+    if (photo) {
+      // cover crop
+      const scale = Math.max((r*2)/photo.width, (r*2)/photo.height);
+      const pw = photo.width * scale, ph = photo.height * scale;
+      ctx.drawImage(photo, cx - pw/2, cy - ph/2, pw, ph);
+    } else {
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(cx-r, cy-r, r*2, r*2);
+      ctx.fillStyle = '#64748b';
+      ctx.font = '14px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Upload photo', cx, cy+5);
+    }
+    ctx.restore();
+
+    // Circle ring
+    ctx.beginPath();
+    ctx.arc(cx, cy, r+4, 0, Math.PI*2);
+    ctx.strokeStyle = s.border;
+    ctx.lineWidth = 4;
+    ctx.shadowColor = s.border;
+    ctx.shadowBlur = 12;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Accent bolts
+    ctx.fillStyle = s.accent;
+    ctx.font = '20px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('⚡', cx - r - 28, cy + 8);
+    ctx.fillText('⚡', cx + r + 28, cy + 8);
+
+    // Name
+    const name = (fanName.value || 'ENTER YOUR NAME').toUpperCase();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 26px Orbitron, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.shadowColor = s.border;
+    ctx.shadowBlur = 10;
+    ctx.fillText(name.slice(0, 20), W/2, 360);
+    ctx.shadowBlur = 0;
+
+    // Tagline
+    ctx.fillStyle = s.accent;
+    ctx.font = 'bold 12px Inter, sans-serif';
+    ctx.fillText(s.tagline, W/2, 390);
+
+    // Line
+    ctx.strokeStyle = s.border;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(W/2 - 40, 405);
+    ctx.lineTo(W/2 + 40, 405);
+    ctx.stroke();
+
+    // Hashtags
+    ctx.fillStyle = '#64748b';
+    ctx.font = '11px Inter, sans-serif';
+    ctx.fillText('#PathariFC  ·  #LetsRockPathri  ·  #Pathari11FC', W/2, 435);
+
+    // Footer badge
+    ctx.fillStyle = s.border;
+    ctx.globalAlpha = 0.15;
+    roundRect(ctx, W/2 - 70, 455, 140, 28, 8, true);
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = s.accent;
+    ctx.font = 'bold 11px Orbitron, sans-serif';
+    ctx.fillText('PATHARI-11 FC FANS', W/2, 474);
+  }
+
+  function roundRect(ctx, x, y, w, h, r, fill) {
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.arcTo(x+w, y, x+w, y+h, r);
+    ctx.arcTo(x+w, y+h, x, y+h, r);
+    ctx.arcTo(x, y+h, x, y, r);
+    ctx.arcTo(x, y, x+w, y, r);
+    ctx.closePath();
+    if (fill) ctx.fill();
+  }
+
+  uploadZone.addEventListener('click', () => photoInput.click());
+  photoInput.addEventListener('change', (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    if (f.size > 5*1024*1024) { alert('Max 5MB'); return; }
+    const img = new Image();
+    img.onload = () => { photo = img; draw(); };
+    img.src = URL.createObjectURL(f);
+  });
+
+  document.querySelectorAll('.frame-style').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.frame-style').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      style = btn.dataset.style;
+      draw();
+    });
+  });
+
+  fanName.addEventListener('input', draw);
+
+  downloadBtn.addEventListener('click', () => {
+    draw();
+    const link = document.createElement('a');
+    link.download = 'pathari-11-fc-fan-frame.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+
+  draw();
+})();
+</script>
+{% endblock %}

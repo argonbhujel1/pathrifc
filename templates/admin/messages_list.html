@@ -1,0 +1,42 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Messages | Admin{% endblock %}
+{% block content %}
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div style="padding:0 20px 16px;"><strong style="color:var(--text);">PATHARI-11 FC Admin</strong></div>
+    <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('admin.messages_list') }}" class="active">Messages</a>
+    <a href="{{ url_for('admin.logout') }}">Logout</a>
+  </aside>
+  <div class="admin-main">
+    <h1 style="color:var(--text);margin-bottom:20px;">Contact Messages</h1>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>Status</th><th>From</th><th>Subject</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for m in items %}
+        <tr style="{% if not m.is_read %}background:rgba(0,240,255,0.06);{% endif %}">
+          <td>{% if m.is_read %}<span class="badge">Read</span>{% else %}<span class="badge" style="background:var(--neon);color:#000;">New</span>{% endif %}
+            {% if m.admin_reply %}<span class="badge">Replied</span>{% endif %}
+          </td>
+          <td>{{ m.name }}<br><small class="text-muted">{{ m.email }}</small></td>
+          <td>{{ m.subject or '—' }}</td>
+          <td>{{ m.created_at.strftime('%d %b %Y %H:%M') if m.created_at else '—' }}</td>
+          <td class="admin-actions">
+            <a href="{{ url_for('admin.message_detail', id=m.id) }}" class="btn btn-ghost btn-sm">Open</a>
+            {% if not m.is_read %}
+            <form method="POST" action="{{ url_for('admin.message_read', id=m.id) }}" style="display:inline;">
+              <button type="submit" class="btn btn-ghost btn-sm">Mark read</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5">No messages yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

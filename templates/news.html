@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}News | Pathari-11 FC{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>Latest News</h1><p>Club updates, match reports and more</p></div></div>
+<section class="section"><div class="container">
+  <div class="tabs">
+    <a href="{{ url_for('main.news') }}" class="{% if not current_cat %}active{% endif %}">All</a>
+    {% for c in categories %}<a href="?category={{ c }}" class="{% if current_cat == c %}active{% endif %}">{{ c }}</a>{% endfor %}
+  </div>
+  <div class="grid-3">
+    {% for a in articles %}
+    <a href="{{ url_for('main.news_detail', slug=a.slug) }}" class="card news-card">
+      <div class="thumb">
+        {% if a.featured_image %}
+        <img src="{{ a.featured_image|media_url }}" alt="{{ a.title }}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
+        {% else %}📰{% endif %}
+      </div>
+      <div class="body">
+        <div class="cat">{{ a.category }}</div>
+        <h3>{{ a.title }}</h3>
+        <p>{{ a.excerpt[:100] if a.excerpt else '' }}{% if a.excerpt and a.excerpt|length > 100 %}…{% endif %}</p>
+        <div class="meta">{{ a.publish_date.strftime('%d %b %Y') if a.publish_date else '' }} · {{ a.author or 'Pathari-11 FC' }}</div>
+      </div>
+    </a>
+    {% else %}<p class="text-muted">No articles yet.</p>{% endfor %}
+  </div>
+</div></section>
+{% endblock %}

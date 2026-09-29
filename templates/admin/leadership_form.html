@@ -1,0 +1,24 @@
+{% extends "admin/base_admin.html" %}
+{% block content %}
+<div class="container" style="max-width:700px;padding:40px 20px;">
+<h2 style="color:var(--text);margin-bottom:16px;">Leadership Form (Official data only)</h2>
+<form method="POST" enctype="multipart/form-data" class="card" style="padding:24px;">
+<div class="form-group"><label>Name *</label><input name="name" class="form-control" value="{{ item.name if item else '' }}" required></div>
+<div class="form-group"><label>Position *</label><input name="position" class="form-control" value="{{ item.position if item else '' }}" required></div>
+<div class="form-group"><label>Section</label>
+<select name="section" class="form-control">
+<option value="Club Leadership">Club Leadership</option>
+<option value="Technology Partner Team">Technology Partner Team</option>
+<option value="Advisory Council">Advisory Council</option>
+</select>
+</div>
+<div class="form-group"><label>Bio</label><textarea name="bio" class="form-control">{{ item.bio if item else '' }}</textarea></div>
+<div class="form-group"><label>Order</label><input type="number" name="order" class="form-control" value="{{ item.order if item else 0 }}"></div>
+<div class="form-group"><label><input type="checkbox" name="is_published" {% if item and item.is_published %}checked{% endif %}> Publish (only when official)</label></div>
+<div class="form-group"><label>Photo</label><input type="file" name="photo" class="form-control"></div>
+<div class="form-group"><label>OR paste photo URL</label><input type="url" name="photo_url" class="form-control" placeholder="https://..."></div>
+<button class="btn btn-primary">Save</button>
+<a href="{{ url_for('admin.leadership_list') }}" class="btn btn-outline">Back</a>
+</form>
+</div>
+{% endblock %}

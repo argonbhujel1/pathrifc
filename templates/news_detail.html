@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ article.title }} | Pathari-11 FC{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container">
+  <div class="cat" style="color:var(--neon);margin-bottom:8px;">{{ article.category }}</div>
+  <h1 style="max-width:800px;margin:0 auto;">{{ article.title }}</h1>
+  <p>{{ article.publish_date.strftime('%d %B %Y') if article.publish_date else '' }} · {{ article.author or 'Pathari-11 FC' }}</p>
+</div></div>
+<section class="section"><div class="container" style="max-width:780px;">
+  {% if article.featured_image %}
+  <div style="margin-bottom:28px;border-radius:16px;overflow:hidden;border:1px solid var(--glass-border);">
+    <img src="{{ article.featured_image|media_url }}" alt="{{ article.title }}" style="width:100%;max-height:420px;object-fit:cover;display:block;">
+  </div>
+  {% endif %}
+  <div style="white-space:pre-line;color:var(--text);font-size:1.05rem;line-height:1.8;">{{ article.content }}</div>
+  {% if related %}
+  <h3 style="color:var(--text);margin:40px 0 16px;">Related</h3>
+  <div class="grid-3">
+    {% for r in related %}
+    <a href="{{ url_for('main.news_detail', slug=r.slug) }}" class="card news-card">
+      <div class="thumb">
+        {% if r.featured_image %}<img src="{{ r.featured_image|media_url }}" alt="" style="width:100%;height:100%;object-fit:cover;">{% else %}📰{% endif %}
+      </div>
+      <div class="body"><h3>{{ r.title }}</h3></div>
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div></section>
+{% endblock %}

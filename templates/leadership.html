@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Leadership | Pathari-11 FC{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1>CLUB LEADERSHIP</h1>
+    <p>The People Behind Pathari-11</p>
+  </div>
+</div>
+<section class="section">
+  <div class="container">
+    {% if leaders %}
+      {% set ns = namespace(prev='') %}
+      {% for l in leaders %}
+        {% set sec = l.section or 'Club Leadership' %}
+        {% if sec != ns.prev %}
+          {% if ns.prev %}</div>{% endif %}
+          <div class="squad-heading-row" style="margin:32px 0 20px;">
+            <h2 class="squad-heading">{{ sec|upper }}</h2>
+            <span class="squad-line"></span>
+          </div>
+          <div class="squad-shield-grid">
+          {% set ns.prev = sec %}
+        {% endif %}
+        <a href="{{ url_for('main.leadership_detail', id=l.id) }}" class="shield-card {% if l.section == 'Technology Partner Team' %}tech-glow{% endif %}">
+          <div class="shield-inner">
+            <div class="shield-photo">
+              {% if l.photo %}
+              <img src="{{ l.photo|media_url }}" alt="{{ l.name }}" loading="lazy">
+              {% else %}
+              <div class="shield-ph">{% if l.section == 'Technology Partner Team' %}💻{% else %}👤{% endif %}</div>
+              {% endif %}
+            </div>
+            <div class="shield-info">
+              <div class="shield-name">{{ (l.name or '')|upper }}</div>
+              <div class="shield-role">{{ l.position or '' }}</div>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+      {% if leaders %}</div>{% endif %}
+    {% else %}
+    <div class="coming-soon">
+      <div class="icon">👔</div>
+      <h2>OFFICIAL INFORMATION COMING SOON</h2>
+      <p>Leadership profiles will appear when published from Admin.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

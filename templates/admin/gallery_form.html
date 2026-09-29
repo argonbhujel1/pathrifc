@@ -1,0 +1,26 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}{% if item %}Edit{% else %}Add{% endif %} Gallery | Admin{% endblock %}
+{% block content %}
+<div class="container" style="max-width:600px;padding:40px 20px;">
+  <h2 style="color:var(--text);margin-bottom:16px;">{% if item %}Edit Gallery Image{% else %}Add Gallery Image{% endif %}</h2>
+  <form method="POST" enctype="multipart/form-data" class="card" style="padding:24px;">
+    <div class="form-group"><label>Title</label><input name="title" class="form-control" value="{{ item.title if item else '' }}"></div>
+    <div class="form-group"><label>Category</label>
+      <select name="category" class="form-control">
+        {% for c in ['Matchday','Training','Players','Fans','Events','Behind the Scenes'] %}
+        <option value="{{ c }}" {% if item and item.category == c %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group"><label>Caption</label><input name="caption" class="form-control" value="{{ item.caption if item else '' }}"></div>
+    {% if item %}
+    <div class="form-group"><label><input type="checkbox" name="is_published" {% if item.is_published %}checked{% endif %}> Published</label></div>
+    {% endif %}
+    <div class="form-group"><label>Image file</label><input type="file" name="image" class="form-control" accept="image/*"></div>
+    <div class="form-group"><label>OR image URL</label><input type="url" name="image_url" class="form-control" placeholder="https://..."></div>
+    {% if item and item.image %}<p><img src="{{ item.image|media_url }}" style="max-height:120px;border-radius:8px;"></p>{% endif %}
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{{ url_for('admin.gallery_list') }}" class="btn btn-outline">Back</a>
+  </form>
+</div>
+{% endblock %}

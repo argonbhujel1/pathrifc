@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}Make Your Own Jersey | Pathari-11 FC{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1>Make Your Own Pathari-11 FC Jersey</h1>
+    <p>Official back photo · name above · number center · BAM Studio below</p>
+  </div>
+</div>
+<section class="section">
+  <div class="container">
+    <div class="grid-2 jersey-builder" style="align-items:start;gap:32px;">
+
+      <div class="jersey-preview-wrap">
+        <div class="jersey-back" id="jerseyBack"
+             data-home="{{ jersey_imgs.get('Home','')|media_url if jersey_imgs else '' }}"
+             data-away="{{ jersey_imgs.get('Away','')|media_url if jersey_imgs else '' }}"
+             data-third="{{ jersey_imgs.get('Third','')|media_url if jersey_imgs else '' }}">
+          <div class="jersey-back-photo" id="jerseyPhoto">
+            {% if jersey_imgs and (jersey_imgs.get('Home') or jersey_imgs.get('Away') or jersey_imgs.get('Third')) %}
+            <img src="{{ (jersey_imgs.get('Home') or jersey_imgs.get('Away') or jersey_imgs.get('Third'))|media_url }}" alt="Pathari-11 FC Jersey" id="jerseyImg">
+            {% else %}
+            <div class="jersey-fallback" id="jerseyFallback">
+              <div class="jersey-fallback-body">
+                {% if club_logo %}<img src="{{ club_logo|media_url }}" class="jf-crest" alt="">{% endif %}
+              </div>
+            </div>
+            {% endif %}
+
+            <!-- Live print layer (back layout) -->
+            <div class="jersey-print">
+              <!-- NAME: upper back -->
+              <div class="jp-name" id="previewName">YOUR NAME</div>
+              <!-- NUMBER: center back -->
+              <div class="jp-number" id="previewNum">10</div>
+              <!-- BAM Studio under number -->
+              <div class="jp-bam">
+                <span>{{ bam_name or 'BAM Studio' }}</span>
+              </div>
+            </div>
+          </div>
+          <p class="jersey-preview-label">Back view · live preview · <span id="kitLabel">Home</span></p>
+        </div>
+      </div>
+
+      <div>
+        <form method="POST" class="card" style="padding:28px;">
+          <div class="form-group">
+            <label>Jersey Type</label>
+            <select name="jersey_type" class="form-control" id="kitSelect">
+              <option value="Home">Home</option>
+              <option value="Away">Away</option>
+              <option value="Third">Third</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Size</label>
+            <select name="size" class="form-control">
+              <option>S</option>
+              <option selected>M</option>
+              <option>L</option>
+              <option>XL</option>
+              <option>XXL</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Name on jersey (max 12)</label>
+            <input type="text" name="player_name" class="form-control" maxlength="12"
+                   placeholder="YOUR NAME" id="nameInput" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label>Number (0–99)</label>
+            <input type="text" name="jersey_number" class="form-control" maxlength="2"
+                   placeholder="10" id="numInput" inputmode="numeric" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label>Quantity</label>
+            <input type="number" name="quantity" value="1" min="1" max="5" class="form-control" style="max-width:100px;">
+          </div>
+          <p style="font-size:1.3rem;font-weight:700;color:var(--neon);margin:16px 0;">
+            Rs. {{ "{:,.0f}".format(base_price) }}
+            <small style="font-size:0.8rem;color:var(--text-muted);">per jersey</small>
+          </p>
+          <button type="submit" class="btn btn-primary">Add Custom Jersey to Cart</button>
+          <a href="{{ url_for('shop.shop') }}" class="btn btn-outline" style="margin-left:8px;">Back to Store</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function(){
+  var nameEl = document.getElementById('previewName');
+  var numEl = document.getElementById('previewNum');
+  var nameIn = document.getElementById('nameInput');
+  var numIn = document.getElementById('numInput');
+  var kitSel = document.getElementById('kitSelect');
+  var back = document.getElementById('jerseyBack');
+  var img = document.getElementById('jerseyImg');
+  var kitLabel = document.getElementById('kitLabel');
+
+  function updName(){
+    var v = (nameIn.value || '').trim().toUpperCase();
+    nameEl.textContent = v || 'YOUR NAME';
+  }
+  function updNum(){
+    var v = (numIn.value || '').replace(/\D/g,'');
+    numIn.value = v;
+    // no spaces between digits
+    numEl.textContent = (v || '10').replace(/\s+/g,'');
+  }
+  function updKit(){
+    var t = (kitSel.value || 'Home').toLowerCase();
+    kitLabel.textContent = kitSel.value;
+    var url = back.getAttribute('data-' + t) || back.getAttribute('data-home') || '';
+    if (img && url) {
+      img.src = url;
+      img.style.display = 'block';
+    }
+    // Kit-based text colors: home=yellow, away=blue, third=dark
+    back.setAttribute('data-kit', t);
+    var photo = document.getElementById('jerseyPhoto');
+    if (photo) photo.setAttribute('data-kit', t);
+  }
+  nameIn.addEventListener('input', updName);
+  numIn.addEventListener('input', updNum);
+  kitSel.addEventListener('change', updKit);
+  updName(); updNum(); updKit();
+})();
+</script>
+{% endblock %}

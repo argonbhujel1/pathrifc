@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Membership | Pathari-11 FC{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>Join the Pathari-11 FC Family</h1><p>Become part of Pride of Pathari</p></div></div>
+<section class="section"><div class="container">
+  <div class="grid-4">
+    {% for plan in plans %}
+    <div class="plan-card {% if plan.name == 'Gold' %}featured{% endif %}">
+      <div class="name">{{ plan.name }}</div>
+      <div class="price">{% if plan.price == 0 %}<span style="color:var(--success);">FREE</span>{% else %}Rs. {{ "{:,.0f}".format(plan.price) }} <small>/ year</small>{% endif %}</div>
+      {% if plan.free_tickets %}<p style="color:var(--neon);font-size:0.85rem;margin-top:4px;">🎟 {{ plan.free_tickets }} free match ticket{% if plan.free_tickets > 1 %}s{% endif %}</p>{% endif %}
+      <ul>
+        {% for b in plan.benefits.split('\n') if b.strip() %}
+        <li>{{ b }}</li>
+        {% endfor %}
+      </ul>
+      {% if session.get('membership_number') %}
+      <a href="{{ url_for('main.membership_card', number=session.get('membership_number')) }}" class="btn btn-outline" style="width:100%;">Already a member</a>
+      {% else %}
+      <a href="{{ url_for('main.membership_register', plan=plan.id) }}" class="btn btn-primary" style="width:100%;">Select</a>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div></section>
+{% endblock %}
